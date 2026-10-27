@@ -7,13 +7,17 @@ Confucius planner and note-taker. The main agent does not need to write checkpoi
 
 `memory.rs` implements the planner's threshold-driven compaction, initial-message
 retention, assistant-boundary tail retention, complete structured summary, and
-first next action. `prompts/compress.txt` adapts the upstream architect and
-note-taker prompts: preserve requirements, decisions, failures, progress and
+first next action. `prompts/prompt-summary.md` and `prompts/prompt-notes.md` contain the
+summary and note-taking instructions: preserve requirements, decisions, failures, progress and
 technical details; record only expensive-to-rediscover insights; update existing
 topics instead of duplicating them.
 
-The two upstream model stages are combined into one schema-constrained Codex
-request. Python/LangChain orchestration is replaced by Rust. See
+Upstream uses a planner extension and a separate note-taking agent. This adaptation
+combines the two Markdown instruction files into one schema-constrained Codex
+request, producing both summary and notes. Splitting the files does not add a
+second model call. Both outputs are parsed before memory is changed, so a failed
+request leaves that batch available for retry. Python/LangChain orchestration is
+replaced by Rust. See
 `THIRD_PARTY_NOTICES.md` for the pinned source revision and `LICENSE-META` for
 upstream attribution. This is an adaptation of the memory workflow, not the full SDK.
 

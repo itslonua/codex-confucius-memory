@@ -32,7 +32,7 @@ pub fn generate(
     let schema_path = directory.path().join("schema.json");
     let output_path = directory.path().join("output.json");
     let diagnostic_path = directory.path().join("stderr.log");
-    let prompt_path = directory.path().join("prompt.txt");
+    let prompt_path = directory.path().join("prompt.md");
     fs::write(&schema_path, schema.to_string())
         .and_then(|()| fs::write(&prompt_path, prompt))
         .map_err(|error| format!("cannot prepare worker input: {error}"))?;
