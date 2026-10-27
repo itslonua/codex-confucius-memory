@@ -1,0 +1,837 @@
+{
+  "method": "actual Codex gpt-6-luna subprocess recall QA; synthetic frozen fixture notes; no coding tasks",
+  "model": "gpt-6-luna",
+  "repeats": 3,
+  "seed": 20261027,
+  "tasks_sha256": "5a1319aa571f5e4472ecd032a8ca9eedaf521248720793465f54b2449fa83a2f",
+  "retrieval": "production codex-memory positional search then read against a temporary v2 Markdown store",
+  "isolation": "codex exec --ignore-user-config --ephemeral, temporary empty cwd, read-only sandbox, hooks/plugins/memories/shell/unified-exec/multi-agent/skill-search disabled; current user's authentication retained",
+  "usage_note": "Token/cost usage is null unless exposed; no cost inferred.",
+  "summary": {
+    "no_memory": {
+      "trials": 15,
+      "valid_answers": 15,
+      "failed_trials": 0,
+      "accuracy": 0.4,
+      "mean_elapsed_seconds": 3.846833130531983
+    },
+    "memory": {
+      "trials": 15,
+      "valid_answers": 15,
+      "failed_trials": 0,
+      "accuracy": 0.8,
+      "mean_elapsed_seconds": 3.7299425109357496
+    }
+  },
+  "trials": [
+    {
+      "task_id": "known_preferences",
+      "task_class": "familiar_recall",
+      "arm": "memory",
+      "elapsed_seconds": 3.571205458007171,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.",
+        "evidence": "Historical memory item 1 explicitly states both Python implementation preferences."
+      },
+      "raw_answer": "{\"answer\":\"Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.\",\"evidence\":\"Historical memory item 1 explicitly states both Python implementation preferences.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the preference.\n\nHistorical memory:\n1|The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests.\n2|\n\nQuestion: Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f57-9d51-7902-a8e3-d577adf5a806\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.\\\",\\\"evidence\\\":\\\"Historical memory item 1 explicitly states both Python implementation preferences.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15801,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":47,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:10.791203Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.802349Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.811915Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.821424Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.829998Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.838449Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.847176Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.857474Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.865949Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.874180Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.882812Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.890881Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:10.899322Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15801,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 47,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "known_preferences",
+      "task_class": "familiar_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 4.331941084004939,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No historical memory was supplied, and the current context contains no explicit Python implementation preferences."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No historical memory was supplied, and the current context contains no explicit Python implementation preferences.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the preference.\n\nHistorical memory:\n(none supplied)\n\nQuestion: Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f57-ab3d-7641-b056-fce9b4bb4603\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No historical memory was supplied, and the current context contains no explicit Python implementation preferences.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15778,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":36,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:14.354125Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.364246Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.373302Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.383361Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.391907Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.400496Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.408881Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.418948Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.427190Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.434969Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.443416Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.451365Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:14.459135Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15778,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 36,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "known_preferences",
+      "task_class": "familiar_recall",
+      "arm": "memory",
+      "elapsed_seconds": 4.617739332999918,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.",
+        "evidence": "Historical memory item 1 explicitly records both preferences."
+      },
+      "raw_answer": "{\"answer\":\"Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.\",\"evidence\":\"Historical memory item 1 explicitly records both preferences.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the preference.\n\nHistorical memory:\n1|The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests.\n2|\n\nQuestion: Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f57-bc3e-7822-903e-a087fc9194fa\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.\\\",\\\"evidence\\\":\\\"Historical memory item 1 explicitly records both preferences.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15801,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":45,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:18.711606Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.723885Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.734557Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.744798Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.754032Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.764610Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.775581Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.787157Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.796091Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.805889Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.815805Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.825065Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:18.833864Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15801,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 45,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "known_preferences",
+      "task_class": "familiar_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 4.1652001250040485,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No current context or supplied historical memory states the user's Python implementation preferences."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No current context or supplied historical memory states the user's Python implementation preferences.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the preference.\n\nHistorical memory:\n(none supplied)\n\nQuestion: Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f57-ce47-7be3-86a2-a4c002345afa\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No current context or supplied historical memory states the user's Python implementation preferences.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15778,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":33,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:23.327582Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.339398Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.349982Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.360824Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.369418Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.379142Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.388974Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.399775Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.409586Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.419284Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.429077Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.438403Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:23.447212Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15778,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 33,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "known_preferences",
+      "task_class": "familiar_recall",
+      "arm": "memory",
+      "elapsed_seconds": 4.206908917010878,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.",
+        "evidence": "Historical memory item 1 explicitly records both preferences."
+      },
+      "raw_answer": "{\"answer\":\"Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.\",\"evidence\":\"Historical memory item 1 explicitly records both preferences.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the preference.\n\nHistorical memory:\n1|The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests.\n2|\n\nQuestion: Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f57-de9a-7700-9899-94170492c324\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"Parse, don't validate at system boundaries; compact, testable code with observable behavior tests.\\\",\\\"evidence\\\":\\\"Historical memory item 1 explicitly records both preferences.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15801,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":45,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:27.505733Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.518038Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.527664Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.537480Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.546935Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.556274Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.566500Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.575491Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.584263Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.593260Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.602792Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.612559Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:27.622389Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15801,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 45,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "known_preferences",
+      "task_class": "familiar_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 4.7254008339950815,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No current context or historical memory states any Python implementation preferences."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No current context or historical memory states any Python implementation preferences.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the preference.\n\nHistorical memory:\n(none supplied)\n\nQuestion: Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f57-eef5-7941-a2c1-dac011626987\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No current context or historical memory states any Python implementation preferences.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15776,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":31,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:31.690588Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.701893Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.710774Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.720134Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.731101Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.739781Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.749113Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.758307Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.766859Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.775302Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.784127Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.793338Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:31.801695Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15776,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 31,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "memory_cli_behavior",
+      "task_class": "familiar_recall",
+      "arm": "memory",
+      "elapsed_seconds": 3.844455583006493,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "Literal, case-insensitive, all-word search over paths and raw Markdown.",
+        "evidence": "Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”"
+      },
+      "raw_answer": "{\"answer\":\"Literal, case-insensitive, all-word search over paths and raw Markdown.\",\"evidence\":\"Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the implementation detail.\n\nHistorical memory:\n1|Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.\n2|\n\nQuestion: For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-0186-7581-a39c-da90ffa44cb1\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"Literal, case-insensitive, all-word search over paths and raw Markdown.\\\",\\\"evidence\\\":\\\"Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15804,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":62,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:36.444305Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.455537Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.464363Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.473468Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.481569Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.489792Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.497977Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.508610Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.517291Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.526662Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.535605Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.543959Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:36.552213Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15804,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 62,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "memory_cli_behavior",
+      "task_class": "familiar_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.6985549999953946,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No matching rule is supplied in the current context, and historical memory is absent."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No matching rule is supplied in the current context, and historical memory is absent.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the implementation detail.\n\nHistorical memory:\n(none supplied)\n\nQuestion: For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-108f-7ef0-8ed4-95410367128e\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No matching rule is supplied in the current context, and historical memory is absent.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15783,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":35,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:40.297262Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.312978Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.324297Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.334710Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.345391Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.355229Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.366135Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.375570Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.384967Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.394865Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.404858Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.414125Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:40.423165Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15783,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 35,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "memory_cli_behavior",
+      "task_class": "familiar_recall",
+      "arm": "memory",
+      "elapsed_seconds": 3.809203458004049,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "Literal, case-insensitive, all-word search over paths and raw Markdown.",
+        "evidence": "Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”"
+      },
+      "raw_answer": "{\"answer\":\"Literal, case-insensitive, all-word search over paths and raw Markdown.\",\"evidence\":\"Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the implementation detail.\n\nHistorical memory:\n1|Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.\n2|\n\nQuestion: For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-1f14-7c32-b68f-3da80bae61ed\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"Literal, case-insensitive, all-word search over paths and raw Markdown.\\\",\\\"evidence\\\":\\\"Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15808,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":62,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:44.010229Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.022218Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.031490Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.040249Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.048390Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.056555Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.064645Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.074818Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.083524Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.092127Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.100980Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.109291Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:44.117352Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15808,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 62,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "memory_cli_behavior",
+      "task_class": "familiar_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.1315580420050537,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No current context or historical memory provides the matching rule."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No current context or historical memory provides the matching rule.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the implementation detail.\n\nHistorical memory:\n(none supplied)\n\nQuestion: For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-2dee-7651-9199-1bc0434cca5e\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No current context or historical memory provides the matching rule.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15787,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":30,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:47.812588Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.824155Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.833579Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.842973Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.851611Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.859965Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.868756Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.878172Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.886865Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.895085Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.903745Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.911671Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:47.920212Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15787,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "memory_cli_behavior",
+      "task_class": "familiar_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 4.154966040994623,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No historical memory or current implementation detail was supplied."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No historical memory or current implementation detail was supplied.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the implementation detail.\n\nHistorical memory:\n(none supplied)\n\nQuestion: For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-3a24-7cf3-833e-601639337e2f\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No historical memory or current implementation detail was supplied.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15779,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":29,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:51.631570Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.642805Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.651870Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.661067Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.670244Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.679129Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.687307Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.697523Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.705629Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.713302Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.722843Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.735914Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:51.745315Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15779,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 29,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "memory_cli_behavior",
+      "task_class": "familiar_recall",
+      "arm": "memory",
+      "elapsed_seconds": 4.137872082996182,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "Literal, case-insensitive all-word search over paths and raw Markdown.",
+        "evidence": "Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”"
+      },
+      "raw_answer": "{\"answer\":\"Literal, case-insensitive all-word search over paths and raw Markdown.\",\"evidence\":\"Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the implementation detail.\n\nHistorical memory:\n1|Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.\n2|\n\nQuestion: For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-4a77-77a2-9748-28ec163f93a6\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"Literal, case-insensitive all-word search over paths and raw Markdown.\\\",\\\"evidence\\\":\\\"Historical memory states: “Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown.”\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15806,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":61,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:55.116883Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.127976Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.136937Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.146080Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.154145Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.162382Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.170582Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.180858Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.189819Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.198422Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.207415Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.216118Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:55.224307Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15806,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 61,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "stale_override",
+      "task_class": "stale_memory_control",
+      "arm": "memory",
+      "elapsed_seconds": 3.364836083012051,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "2",
+        "evidence": "The current task update explicitly says the retry count was changed to 2 today, and it supersedes the historical count of 4."
+      },
+      "raw_answer": "{\"answer\":\"2\",\"evidence\":\"The current task update explicitly says the retry count was changed to 2 today, and it supersedes the historical count of 4.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nCurrent task update: the retry count was changed to 2 today. This current statement supersedes historical notes.\n\nHistorical memory:\n1|Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update.\n2|\n\nQuestion: What retry count applies to the current task? The current task update is authoritative over memory.\n",
+      "retrieved_memory": "1|Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-5aa7-72a2-a164-8af138a79ee0\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"2\\\",\\\"evidence\\\":\\\"The current task update explicitly says the retry count was changed to 2 today, and it supersedes the historical count of 4.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15809,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":46,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:50:59.261810Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.272727Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.281247Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.290113Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.299638Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.309095Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.319336Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.329693Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.338293Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.349118Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.358298Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.366739Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:50:59.375529Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15809,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 46,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "stale_override",
+      "task_class": "stale_memory_control",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.6812322909972863,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "2",
+        "evidence": "The current task update says the retry count was changed to 2 today."
+      },
+      "raw_answer": "{\"answer\":\"2\",\"evidence\":\"The current task update says the retry count was changed to 2 today.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nCurrent task update: the retry count was changed to 2 today. This current statement supersedes historical notes.\n\nHistorical memory:\n(none supplied)\n\nQuestion: What retry count applies to the current task? The current task update is authoritative over memory.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-67db-72c3-ba1c-eeab09bd74ec\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"2\\\",\\\"evidence\\\":\\\"The current task update says the retry count was changed to 2 today.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15785,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":34,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:02.641386Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.652753Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.661744Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.671393Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.679616Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.688049Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.697740Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.708928Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.717766Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.727941Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.737220Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.746487Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:02.754824Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15785,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "stale_override",
+      "task_class": "stale_memory_control",
+      "arm": "memory",
+      "elapsed_seconds": 3.464432000007946,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "2",
+        "evidence": "Current task update states the retry count was changed to 2 today and supersedes historical notes."
+      },
+      "raw_answer": "{\"answer\":\"2\",\"evidence\":\"Current task update states the retry count was changed to 2 today and supersedes historical notes.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nCurrent task update: the retry count was changed to 2 today. This current statement supersedes historical notes.\n\nHistorical memory:\n1|Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update.\n2|\n\nQuestion: What retry count applies to the current task? The current task update is authoritative over memory.\n",
+      "retrieved_memory": "1|Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-763f-70f0-bf43-b75e66ef9e86\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"2\\\",\\\"evidence\\\":\\\"Current task update states the retry count was changed to 2 today and supersedes historical notes.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15809,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":38,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:06.325944Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.337469Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.346729Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.356247Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.365016Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.372716Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.381501Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.391473Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.400283Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.408871Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.417735Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.426046Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:06.434312Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15809,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 38,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "stale_override",
+      "task_class": "stale_memory_control",
+      "arm": "no_memory",
+      "elapsed_seconds": 4.842348125006538,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "2",
+        "evidence": "The current task update says the retry count was changed to 2 today, and it supersedes historical notes."
+      },
+      "raw_answer": "{\"answer\":\"2\",\"evidence\":\"The current task update says the retry count was changed to 2 today, and it supersedes historical notes.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nCurrent task update: the retry count was changed to 2 today. This current statement supersedes historical notes.\n\nHistorical memory:\n(none supplied)\n\nQuestion: What retry count applies to the current task? The current task update is authoritative over memory.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-83bf-7223-a75e-0b38b538a82e\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"2\\\",\\\"evidence\\\":\\\"The current task update says the retry count was changed to 2 today, and it supersedes historical notes.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15781,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":41,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:10.411959Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.433178Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.442372Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.451271Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.462126Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.472111Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.480078Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.489569Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.499844Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.507876Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.516730Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.524961Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:10.533581Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15781,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 41,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "stale_override",
+      "task_class": "stale_memory_control",
+      "arm": "memory",
+      "elapsed_seconds": 3.725972250002087,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "2",
+        "evidence": "The current task update explicitly says the retry count was changed to 2 today and supersedes the historical note."
+      },
+      "raw_answer": "{\"answer\":\"2\",\"evidence\":\"The current task update explicitly says the retry count was changed to 2 today and supersedes the historical note.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nCurrent task update: the retry count was changed to 2 today. This current statement supersedes historical notes.\n\nHistorical memory:\n1|Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update.\n2|\n\nQuestion: What retry count applies to the current task? The current task update is authoritative over memory.\n",
+      "retrieved_memory": "1|Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-96b7-7dd2-8218-da9f30fefb75\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"2\\\",\\\"evidence\\\":\\\"The current task update explicitly says the retry count was changed to 2 today and supersedes the historical note.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15809,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":41,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:14.636909Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.647860Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.656560Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.665720Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.674143Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.682413Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.690767Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.700831Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.709016Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.717458Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.726360Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.734736Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:14.742789Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15809,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 41,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "stale_override",
+      "task_class": "stale_memory_control",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.5992881249985658,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "2",
+        "evidence": "The current task update says the retry count was changed to 2 today."
+      },
+      "raw_answer": "{\"answer\":\"2\",\"evidence\":\"The current task update says the retry count was changed to 2 today.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nCurrent task update: the retry count was changed to 2 today. This current statement supersedes historical notes.\n\nHistorical memory:\n(none supplied)\n\nQuestion: What retry count applies to the current task? The current task update is authoritative over memory.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-a53f-7121-bb0c-d74f79acb7ea\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"2\\\",\\\"evidence\\\":\\\"The current task update says the retry count was changed to 2 today.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15783,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":34,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:18.361516Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.374778Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.387444Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.399481Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.410522Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.421212Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.432363Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.441699Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.452144Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.462575Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.472875Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.482390Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:18.492960Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15783,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "fresh_decision",
+      "task_class": "fresh_memory_recall",
+      "arm": "memory",
+      "elapsed_seconds": 4.103766750005889,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "parser version and source identifier",
+        "evidence": "Historical memory says the cache key is composed from parser version and source identifier."
+      },
+      "raw_answer": "{\"answer\":\"parser version and source identifier\",\"evidence\":\"Historical memory says the cache key is composed from parser version and source identifier.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the decision.\n\nHistorical memory:\n1|New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier.\n2|\n\nQuestion: What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-b365-7fa1-a2e8-3c6214dc6986\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"parser version and source identifier\\\",\\\"evidence\\\":\\\"Historical memory says the cache key is composed from parser version and source identifier.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15804,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":38,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:21.978673Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:21.990127Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:21.998747Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.007646Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.016037Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.024330Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.032694Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.042762Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.051069Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.059322Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.067756Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.076156Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:22.084804Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15804,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 38,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "fresh_decision",
+      "task_class": "fresh_memory_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.463425374997314,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No historical memory was supplied, and the current context does not specify a cache key."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No historical memory was supplied, and the current context does not specify a cache key.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the decision.\n\nHistorical memory:\n(none supplied)\n\nQuestion: What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-c373-7860-802f-f1c179161f9d\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No historical memory was supplied, and the current context does not specify a cache key.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15779,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":36,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:26.089021Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.099425Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.107879Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.117797Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.126110Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.134428Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.145292Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.155005Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.163664Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.171827Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.180959Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.189472Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:26.197660Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15779,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 36,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "fresh_decision",
+      "task_class": "fresh_memory_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.717140833992744,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No historical memory or current context provides the cache key."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No historical memory or current context provides the cache key.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the decision.\n\nHistorical memory:\n(none supplied)\n\nQuestion: What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-d10b-7a83-9231-474b0f68e3a0\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No historical memory or current context provides the cache key.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15779,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":30,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:29.569614Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.580745Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.589613Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.598478Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.606695Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.614880Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.623318Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.633479Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.641908Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.650250Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.659457Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.668217Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:29.676201Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15779,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "fresh_decision",
+      "task_class": "fresh_memory_recall",
+      "arm": "memory",
+      "elapsed_seconds": 3.3333472499944037,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "parser version and source identifier",
+        "evidence": "Historical memory says parser refresh results use a cache key composed from parser version and source identifier."
+      },
+      "raw_answer": "{\"answer\":\"parser version and source identifier\",\"evidence\":\"Historical memory says parser refresh results use a cache key composed from parser version and source identifier.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the decision.\n\nHistorical memory:\n1|New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier.\n2|\n\nQuestion: What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-df80-7dc0-bbcc-a122660b4652\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"parser version and source identifier\\\",\\\"evidence\\\":\\\"Historical memory says parser refresh results use a cache key composed from parser version and source identifier.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15804,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":41,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:33.271833Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.284000Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.293157Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.303080Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.312458Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.320985Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.330460Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.340483Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.350538Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.360470Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.369971Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.379567Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:33.389066Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15804,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 41,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "fresh_decision",
+      "task_class": "fresh_memory_recall",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.198867540995707,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": false,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No decision or historical memory about a parser refresh results cache key was supplied."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No decision or historical memory about a parser refresh results cache key was supplied.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the decision.\n\nHistorical memory:\n(none supplied)\n\nQuestion: What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-ec89-7571-91cd-4085dcd6e42e\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No decision or historical memory about a parser refresh results cache key was supplied.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15777,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":34,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:36.606839Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.617875Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.626639Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.636602Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.645069Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.653217Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.661758Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.671757Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.680165Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.688595Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.697579Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.705761Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:36.714160Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15777,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "fresh_decision",
+      "task_class": "fresh_memory_recall",
+      "arm": "memory",
+      "elapsed_seconds": 4.315556707995711,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "parser version and source identifier",
+        "evidence": "Historical memory states the cache key is composed from parser version and source identifier."
+      },
+      "raw_answer": "{\"answer\":\"parser version and source identifier\",\"evidence\":\"Historical memory states the cache key is composed from parser version and source identifier.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. No current message supplies the decision.\n\nHistorical memory:\n1|New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier.\n2|\n\nQuestion: What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.\n",
+      "retrieved_memory": "1|New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f58-f918-79c2-ac7a-146036870d50\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"parser version and source identifier\\\",\\\"evidence\\\":\\\"Historical memory states the cache key is composed from parser version and source identifier.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15800,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":38,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:39.822800Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.834266Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.844376Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.856137Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.866790Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.877077Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.891471Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.902311Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.918274Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.930047Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.940451Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.951048Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:39.961194Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15800,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 38,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "unknown_abstention",
+      "task_class": "unknown_control",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.539751457996317,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No historical memory or current context specifies a dashboard color palette."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No historical memory or current context specifies a dashboard color palette.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. The available memory may be unrelated.\n\nHistorical memory:\n(none supplied)\n\nQuestion: Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f59-09f9-7092-8137-dc2e5df66868\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No historical memory or current context specifies a dashboard color palette.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15777,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":31,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:44.144004Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.156377Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.166750Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.177412Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.186833Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.196449Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.207944Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.219191Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.228915Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.239129Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.248681Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.258660Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:44.269565Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15777,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 31,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "unknown_abstention",
+      "task_class": "unknown_control",
+      "arm": "memory",
+      "elapsed_seconds": 3.5042374999902677,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "The historical memory explicitly says no color palette decision is recorded."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"The historical memory explicitly says no color palette decision is recorded.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. The available memory may be unrelated.\n\nHistorical memory:\n1|Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded.\n2|\n\nQuestion: Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.\n",
+      "retrieved_memory": "1|Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f59-17d8-70a0-9759-bc0cea9ef352\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"The historical memory explicitly says no color palette decision is recorded.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15800,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":31,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:47.693677Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.705162Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.714508Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.723066Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.731250Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.739447Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.747754Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.758157Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.767001Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.775560Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.785328Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.795396Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:47.803554Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15800,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 31,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 1
+    },
+    {
+      "task_id": "unknown_abstention",
+      "task_class": "unknown_control",
+      "arm": "memory",
+      "elapsed_seconds": 3.040204500008258,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "Historical memory states that no color palette decision is recorded."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"Historical memory states that no color palette decision is recorded.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. The available memory may be unrelated.\n\nHistorical memory:\n1|Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded.\n2|\n\nQuestion: Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.\n",
+      "retrieved_memory": "1|Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f59-258f-71c0-a3d0-daf29de57980\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"Historical memory states that no color palette decision is recorded.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15798,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":30,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:51.205894Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.216581Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.225256Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.235186Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.243294Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.251380Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.259532Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.270099Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.278551Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.286986Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.295615Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.304139Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:51.313344Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15798,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "unknown_abstention",
+      "task_class": "unknown_control",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.5559458329953486,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No palette choice is present in the supplied current context or historical memory."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No palette choice is present in the supplied current context or historical memory.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. The available memory may be unrelated.\n\nHistorical memory:\n(none supplied)\n\nQuestion: Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f59-3169-7640-908a-83f7099c3bd5\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No palette choice is present in the supplied current context or historical memory.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15775,\"cached_input_tokens\":0,\"cache_write_input_tokens\":0,\"output_tokens\":33,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:54.240741Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.253509Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.263897Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.273907Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.282748Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.291841Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.302145Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.312273Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.322564Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.332098Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.341625Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.350992Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:54.360490Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15775,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 33,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 2
+    },
+    {
+      "task_id": "unknown_abstention",
+      "task_class": "unknown_control",
+      "arm": "memory",
+      "elapsed_seconds": 2.9093997909949394,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "Historical memory says no color palette decision is recorded."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"Historical memory says no color palette decision is recorded.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. The available memory may be unrelated.\n\nHistorical memory:\n1|Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded.\n2|\n\nQuestion: Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.\n",
+      "retrieved_memory": "1|Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded.\n2|",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f59-3f54-77b1-bfd1-c758e5ead41d\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"Historical memory says no color palette decision is recorded.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15800,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":29,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:51:57.801109Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.811600Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.822475Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.835834Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.847839Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.858520Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.868675Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.876971Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.885428Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.894130Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.902198Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.910885Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:51:57.918899Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15800,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 29,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    },
+    {
+      "task_id": "unknown_abstention",
+      "task_class": "unknown_control",
+      "arm": "no_memory",
+      "elapsed_seconds": 3.896876250000787,
+      "exit_code": 0,
+      "timed_out": false,
+      "correct": true,
+      "answer": {
+        "answer": "unknown",
+        "evidence": "No historical memory or current-context evidence specifies a dashboard color palette."
+      },
+      "raw_answer": "{\"answer\":\"unknown\",\"evidence\":\"No historical memory or current-context evidence specifies a dashboard color palette.\"}",
+      "prompt": "Answer this recall question from the supplied current context and, when present, the supplied historical memory. Treat the current task as authoritative if it conflicts with historical memory. Abstain with 'unknown' when evidence is absent. Return only JSON with keys answer and evidence.\n\nCurrent context:\nYou are answering a small recall question. The available memory may be unrelated.\n\nHistorical memory:\n(none supplied)\n\nQuestion: Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.\n",
+      "retrieved_memory": "",
+      "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a17f59-4abc-75e0-8a3a-20134a9e790c\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in /Users/alexanderkrapivnoy/.codex/config.toml.\"}}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"{\\\"answer\\\":\\\"unknown\\\",\\\"evidence\\\":\\\"No historical memory or current-context evidence specifies a dashboard color palette.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":15775,\"cached_input_tokens\":14720,\"cache_write_input_tokens\":0,\"output_tokens\":32,\"reasoning_output_tokens\":0}}\n",
+      "stderr": "2026-10-27T21:52:00.722235Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.733629Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.742480Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.753567Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.761978Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.770129Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.779617Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.788627Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.796887Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.805484Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.814297Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.822268Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n2026-10-27T21:52:00.830549Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back\n",
+      "usage": {
+        "input_tokens": 15775,
+        "cached_input_tokens": 14720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 32,
+        "reasoning_output_tokens": 0
+      },
+      "repeat": 3
+    }
+  ],
+  "harness_sha256": "ae2c38e1a5be4620432e9f5e420585adc578b2a2a4a9b7ac78e44c480318a55a",
+  "usage_totals_by_arm": {
+    "no_memory": {
+      "input_tokens": 236692,
+      "cached_input_tokens": 132480,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 499,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 0
+    },
+    "memory": {
+      "input_tokens": 237054,
+      "cached_input_tokens": 117760,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 654,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 0
+    }
+  },
+  "run_notes": [
+    "Only the final complete 30-trial run is included. A preliminary run was interrupted after 9 trials and discarded; two one-task harness smoke runs were excluded.",
+    "All 30 final subprocesses exited successfully and produced structured answers; no timeout occurred."
+  ],
+  "posthoc_semantic_audit": {
+    "task_id": "memory_cli_behavior",
+    "strict_rubric": "All three memory answers scored false because the frozen expected-term rubric requires the word \"words\"; it expects the phrase \"all words\".",
+    "human_audit": "All three memory answers state \"all-word\" search over paths and raw Markdown, semantically matching the note. This post-hoc audit does not alter the frozen per-trial scores.",
+    "adjusted_memory_accuracy_if_audited": "15/15 (100%); strict frozen rubric remains 12/15 (80%)."
+  }
+}

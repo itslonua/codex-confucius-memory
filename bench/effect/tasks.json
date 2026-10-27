@@ -1,0 +1,23 @@
+[
+  {
+    "id": "repeat-catalog",
+    "kind": "repeat",
+    "query": "catalog slugify punctuation tests",
+    "prompt": "Fix the observed mismatch between importer.import_record and lookup.lookup_record for titles with punctuation. Use the current policy: lowercase ASCII letters and digits, remove punctuation, and use underscores between words. Both catalog.slugify and archive.archive_key participate in this integration, so update both formatters consistently. Add regression tests in a new tests/test_catalog.py file. Leave all other existing files unchanged.",
+    "acceptance": {"oracle": "catalog.py", "artifacts": ["catalog.py", "archive.py", "tests/test_catalog.py"]}
+  },
+  {
+    "id": "transfer-archive",
+    "kind": "transfer",
+    "query": "archive key normalization underscore policy tests",
+    "prompt": "Update archive.archive_key to lowercase ASCII, remove punctuation, and use underscores between words. Keep the implementation change in archive.py and add regression tests in a new tests/test_archive.py file. Confirm title 'The, Archive!' becomes 'the_archive'. Do not alter catalog.py or policy.py; leave all other existing files unchanged.",
+    "acceptance": {"oracle": "archive.py", "artifacts": ["archive.py", "tests/test_archive.py"]}
+  },
+  {
+    "id": "stale-policy-control",
+    "kind": "stale_control",
+    "query": "historical separator decision catalog archive policy",
+    "prompt": "Update archive.archive_key to normalize punctuation and spaces according to the current policy.py. A previous decision may be out of date; inspect current source before relying on it. Add regression tests in a new tests/test_policy.py file. Do not change catalog.py or policy.py; leave all other existing files unchanged.",
+    "acceptance": {"oracle": "policy.py", "artifacts": ["archive.py", "tests/test_policy.py"]}
+  }
+]

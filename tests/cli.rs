@@ -38,7 +38,12 @@ fn generated_hooks_have_correct_events_and_safe_quoting() {
         v["hooks"]["SessionStart"][0]["matcher"],
         "^(startup|resume|compact)$"
     );
-    assert!(v["hooks"]["Stop"][0]["hooks"][0].get("async").is_none());
+    for event in ["Stop", "PreCompact"] {
+        assert_eq!(v["hooks"][event][0]["hooks"][0]["async"], true);
+        assert_eq!(v["hooks"][event][0]["hooks"][0]["timeout"], 130);
+    }
+    assert_eq!(v["hooks"]["SessionStart"][0]["hooks"][0]["async"], false);
+    assert_eq!(v["hooks"]["SessionStart"][0]["hooks"][0]["timeout"], 3);
     assert!(
         v["hooks"]["PreCompact"][0]["hooks"][0]["command"]
             .as_str()

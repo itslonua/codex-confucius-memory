@@ -26,9 +26,10 @@ subdirectories keep separate memory.
 
 ## How it fits into Codex
 
-Native hooks do the work: `Stop` processes new history and summarizes when a
-budget is reached; `PreCompact` summarizes pending history before compaction;
-`SessionStart` restores the task summary and an index of project notes.
+Native background hooks do the work: `Stop` processes new history and summarizes
+when a budget is reached; `PreCompact` schedules pending history for summarization
+without delaying compaction. `SessionStart` reads saved context synchronously with
+a three-second timeout; it never calls the model.
 
 This supplements Codex's built-in compaction. It does not replace that algorithm
 or rewrite the original conversation. Each successful summary is saved with the
@@ -80,7 +81,71 @@ stores migrate on their first write while retaining the original file.
 service used by the isolated Codex CLI worker.** It uses your existing Codex
 authentication and normal usage allowance. The worker does not inherit custom
 user configuration, including custom provider settings. Model calls can add
-latency; this is not an offline summarizer.
+background work; this is not an offline summarizer. A newly generated summary may
+not be ready at the next startup. Codex cancels unfinished background hooks when
+the session ends; retained transcripts allow a later hook to retry. Review changed
+hook definitions with `/hooks` before relying on the new configuration.
+
+## Benchmarks
+
+An exploratory run on 2026-10-28 compared isolated `gpt-6-luna` coding sessions
+with and without Confucius memory. **It did not demonstrate a quality improvement.**
+Three small synthetic tasks covered a repeated importer/lookup investigation,
+a related formatter change, and a changed separator policy. Each task was run
+three times per condition, with fresh source copies and seeded paired ordering.
+Both conditions could solve every task from the same source and logs.
+
+| Automatic restoration: 9 trials per condition | Without saved memory | With saved memory |
+| --- | ---: | ---: |
+| Passed independent checks | 3/9 | 3/9 |
+| Input tokens, including cached tokens | 1,286,100 | 1,027,475 |
+| Cached input tokens (subset of input) | 1,208,704 | 966,272 |
+| Output tokens | 12,399 | 11,048 |
+| Shell command events | 44 | 34 |
+| Mean time, including restoration | 20.93 s | 18.49 s |
+| Standard API-equivalent trial cost | $0.02603 | $0.02131 |
+
+### Method
+
+1. A separate Luna investigation examined an earlier source snapshot. The actual
+   `codex-memory compress` command created one project note and a session summary.
+   Held-out task solutions and hidden checks were not supplied to that session.
+2. The memory corpus was frozen. Every trial started a fresh CLI process with the
+   same model, tools, task source and current requirements. User configuration,
+   native memory, plugins and automatic hooks were disabled for isolation.
+3. In the automatic-restoration experiment, the runner called the real `restore`
+   command and supplied its returned context before the task. The control used an
+   empty store; the treatment included the prior summary and note index. This
+   emulates continuation context, not the desktop hook scheduler itself.
+4. Immutable external Python checks and required file changes determined success.
+   Failed solutions stayed in the denominator. Prompts, tool events, usage, code
+   snapshots, hashes and check outputs were retained. All 18 saved solutions were
+   independently checked again with matching outcomes.
+5. A separate, earlier optional-retrieval experiment also ran 18 sessions: the
+   control passed 4/9 and treatment 3/9. Agents rarely read the available note.
+   Its results are kept separate from automatic restoration.
+
+The automatic-restoration run observed 20% fewer input tokens and 18% lower trial
+cost, with equal success and paired outcomes of one memory win, one loss and
+seven ties. This is a small descriptive sample, not a statistically established
+saving. The stale-policy check also under-specified underscore removal, so its
+failures do not establish harm from stale memory. These fixtures are not a
+long-horizon benchmark or a comparison against native Codex compaction.
+
+Costs use the published [Luna standard API rates](https://developers.openai.com/api/docs/models/gpt-6-luna):
+$0.10 per million uncached input tokens, $0.01 per million cached input tokens and
+$0.50 per million output tokens. They are API equivalents, not confirmed Codex
+account charges. The measured learning investigation cost $0.00426 and memory
+compression $0.00252. Including compression alone reduces the observed nine-trial
+saving to 8.4%; charging both learning and compression makes that group 7.9% more
+expensive than control. Repeated trials do not establish real-world amortization.
+Preliminary setup calls and benchmark-development costs are excluded.
+
+See the [full report](bench/effect/REPORT.md),
+[reproduction instructions](bench/effect/README.md), and
+[raw automatic-restoration results](bench/effect/results/continuation/full-run.json).
+The original [recall-only benchmark](bench/README.md) is retained separately; it
+measures access to remembered facts, not coding productivity.
 
 ## Status and limits
 
@@ -89,8 +154,8 @@ incremental processing, recovery, isolation, and subprocess failures. Summaries
 are lossy and may be incomplete or stale; verify important facts against the
 original conversation and code. The Codex rollout format is not a stable API.
 
-There is no demonstrated token saving or long-horizon benchmark improvement over
-Codex's native compaction. The aim is to preserve useful context; the actual
+There is no established general token saving or long-horizon benchmark improvement
+over Codex's native compaction. The aim is to preserve useful context; the actual
 benefit depends on the task and the quality of the summaries.
 
 ## Credits

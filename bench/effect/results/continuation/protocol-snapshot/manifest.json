@@ -1,0 +1,29 @@
+{
+  "files": {
+    "PLAN.md": "f29cd986d7b23a44ed7d1e5b9c08dd3049514c9ef36c52627eff4dbbcca597f6",
+    "PLAN_CONTINUATION.md": "d270ea678361baf4b73186014430d22918d31dceaedebb6a4701d444c851a7b7",
+    "continuation_bench.py": "7e393ba090665427ac5703f895de83b6ace623bfeff7b60365d0c72bd478e63c",
+    "fixtures/learning_repo/README.md": "632a4ccb6d8d4ffa6858d08cae42768ed400db1820189b96bd7145a16db423bc",
+    "fixtures/learning_repo/archive.py": "aa2199d847d7ef0bb32291b5fa6d8bbb500b47b4427d64c27fefbb0edb866e98",
+    "fixtures/learning_repo/catalog.py": "2ad4714d6dfa9f190f364dc974ea93c56b2b249f7606d9115bb2db479ce4ad2a",
+    "fixtures/learning_repo/importer.py": "82097b42b1644119aab72302507f233ed86de59a8772ac38eb6bdbaafd430cd9",
+    "fixtures/learning_repo/ingestion.log": "0a0f41248a08c672201eb7276eca38e5e09b205bcea854dc8865a130c6009e4b",
+    "fixtures/learning_repo/lookup.py": "e5e622d67b67e98f882d14e1951fb2d25b91e48faf575912350acb322449da68",
+    "fixtures/learning_repo/policy.py": "e484b353f53f54b9bff99e8369df8194002b494981029843dd694bdca94ec8ec",
+    "fixtures/learning_repo/tests/reproduce_integration.py": "ef1aecfb86f240949f431d61ad6c49252125a440606f5972d392e3eaf917d2fb",
+    "fixtures/learning_repo/tests/test_seed.py": "c0d834d607ce11f405f33c125a58a3736e16f3fe16b651423e6303997dbbfb7b",
+    "fixtures/repo/README.md": "632a4ccb6d8d4ffa6858d08cae42768ed400db1820189b96bd7145a16db423bc",
+    "fixtures/repo/archive.py": "f4969c432b124f759df44b49d8bdea2b93255480ce84e22265acdc86eea99e05",
+    "fixtures/repo/catalog.py": "2ad4714d6dfa9f190f364dc974ea93c56b2b249f7606d9115bb2db479ce4ad2a",
+    "fixtures/repo/importer.py": "82097b42b1644119aab72302507f233ed86de59a8772ac38eb6bdbaafd430cd9",
+    "fixtures/repo/ingestion.log": "0a0f41248a08c672201eb7276eca38e5e09b205bcea854dc8865a130c6009e4b",
+    "fixtures/repo/lookup.py": "e5e622d67b67e98f882d14e1951fb2d25b91e48faf575912350acb322449da68",
+    "fixtures/repo/policy.py": "2ed82d0ef0f862973469ca28c59f88d89b33d4f8bf952f4388fcd14a096eecd7",
+    "fixtures/repo/tests/reproduce_integration.py": "ef1aecfb86f240949f431d61ad6c49252125a440606f5972d392e3eaf917d2fb",
+    "fixtures/repo/tests/test_seed.py": "c0d834d607ce11f405f33c125a58a3736e16f3fe16b651423e6303997dbbfb7b",
+    "oracle/archive.py": "9249a3f3024af399b13f4bac3889744af3bd35ff404b4625d1cac6421f75cd55",
+    "oracle/catalog.py": "8e1322770d472e9d8c32e551cd60e36e968172ae44ff69cde16d7c140ba43db7",
+    "oracle/policy.py": "88fb3bd8ab7f44a319fdb39f263bf86068d80ba4ff3e337df2bfb8240de42f12",
+    "tasks.json": "bf5c650a58b118c14dfd0f0ed4131754a4d5888d9814d51690e63f9e0c9d4b98"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "state": "interrupted_preflight_during_memory_compress",
+  "learning_exit_code": 0,
+  "held_out_trials_started": false,
+  "raw_learning_jsonl_preserved": true,
+  "memory_creation_usage": null,
+  "note_count": null,
+  "reason": "Stopped before held-out trials after discovering the repeat task's allowed-change contract did not match its integration oracle; incomplete temporary memory-store output was not retained, so usage and note count are unavailable."
+}
