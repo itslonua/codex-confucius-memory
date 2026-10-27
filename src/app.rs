@@ -1,16 +1,11 @@
 use crate::{
-    memory::{Generate, MAX_HISTORY_MESSAGES, Memory, Note, NoteId},
-    transcript::{Cursor, digest, read_new},
+    memory::{Generate, MAX_HISTORY_MESSAGES},
+    store::{self, Project},
+    transcript::{digest, read_new},
 };
-use fs2::FileExt;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{Value, json};
-use std::{
-    collections::BTreeMap,
-    fs::{self, File, OpenOptions},
-    io::{Read, Write},
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 #[derive(Deserialize)]
 struct RawEvent {
@@ -62,67 +57,10 @@ impl Event {
         })
     }
 }
-#[derive(Default, Serialize, Deserialize)]
-struct Session {
-    cursor: Cursor,
-    memory: Memory,
-    revision: u64,
-    #[serde(default)]
-    pending: bool,
-}
-#[derive(Serialize, Deserialize)]
-struct Project {
-    version: u32,
-    sessions: BTreeMap<String, Session>,
-    notes: BTreeMap<String, Note>,
-}
-impl Default for Project {
-    fn default() -> Self {
-        Self {
-            version: 1,
-            sessions: BTreeMap::new(),
-            notes: BTreeMap::new(),
-        }
-    }
-}
 fn load(path: &Path) -> Result<Project, String> {
-    let file = match File::open(path) {
-        Ok(f) => f,
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(Project::default()),
-        Err(e) => return Err(e.to_string()),
-    };
-    let mut bytes = Vec::new();
-    file.take(32 * 1024 * 1024 + 1)
-        .read_to_end(&mut bytes)
-        .map_err(|e| e.to_string())?;
-    if bytes.len() > 32 * 1024 * 1024 {
-        return Err("project memory exceeds 32 MiB".into());
-    }
-    let value: Project =
-        serde_json::from_slice(&bytes).map_err(|e| format!("corrupt memory: {e}"))?;
-    if value.version != 1 {
-        return Err("unsupported memory version".into());
-    }
-    if value.notes.iter().any(|(id, note)| id != note.id.as_str()) {
-        return Err("corrupt memory: note key does not match its id".into());
-    }
-    Ok(value)
+    store::read(path)
 }
-fn save(path: &Path, project: &Project) -> Result<(), String> {
-    let parent = path.parent().ok_or("memory path has no parent")?;
-    let mut file = tempfile::NamedTempFile::new_in(parent).map_err(|e| e.to_string())?;
-    let bytes = serde_json::to_vec(project).map_err(|e| e.to_string())?;
-    if bytes.len() > 32 * 1024 * 1024 {
-        return Err("project memory exceeds 32 MiB".into());
-    }
-    file.write_all(&bytes)
-        .and_then(|()| file.as_file().sync_all())
-        .map_err(|e| e.to_string())?;
-    file.persist(path).map_err(|e| e.to_string())?;
-    File::open(parent)
-        .and_then(|f| f.sync_all())
-        .map_err(|e| e.to_string())
-}
+
 fn project_path(root: &Path, cwd: &Path) -> Result<PathBuf, String> {
     if !root.is_absolute() {
         return Err("store path must be absolute".into());
@@ -147,7 +85,12 @@ impl TryFrom<String> for SearchQuery {
 }
 pub enum Lookup {
     Search(SearchQuery),
-    Read(NoteId),
+    Read {
+        path: String,
+        start: Option<i64>,
+        end: Option<i64>,
+    },
+    SearchMemory(crate::hierarchical_memory::SearchInput),
 }
 
 pub fn lookup(root: &Path, cwd: &Path, request: &Lookup) -> Result<Value, String> {
@@ -162,30 +105,55 @@ pub fn lookup(root: &Path, cwd: &Path, request: &Lookup) -> Result<Value, String
         Lookup::Search(query) => {
             let matches: Vec<_> = project
                 .notes
-                .values()
-                .filter(|note| note.matches(&query.0))
+                .iter()
+                .filter(|(path, content)| {
+                    let text = format!("{path}\n{content}").to_lowercase();
+                    query.0.iter().all(|term| text.contains(term))
+                })
                 .collect();
             let rows: Vec<_> = matches
                 .iter()
                 .take(20)
-                .map(|note| json!({"id":note.id,"title":note.title}))
+                .map(|(path, _)| json!({"path":path}))
                 .collect();
             Ok(
                 json!({"cwd":cwd,"matches":rows,"total_matches":matches.len(),"truncated":matches.len()>20,"warning":warning}),
             )
         }
-        Lookup::Read(id) => {
-            let note = project
-                .notes
-                .get(id.as_str())
-                .ok_or_else(|| format!("note not found: {}", id.as_str()))?;
-            Ok(json!({"cwd":cwd,"note":note,"warning":warning}))
+        Lookup::SearchMemory(input) => {
+            let base = project_path(root, &cwd)?.with_extension("").join("notes");
+            let results = crate::hierarchical_memory::search_memory(&base, &project.notes, input)?;
+            Ok(json!({"cwd":cwd,"results":results,"warning":warning}))
+        }
+        Lookup::Read { path, start, end } => {
+            let base = project_path(root, &cwd)?.with_extension("").join("notes");
+            let is_directory = path.is_empty()
+                || path == "/"
+                || path == "."
+                || path.ends_with('/')
+                || project
+                    .notes
+                    .keys()
+                    .any(|key| key.starts_with(&format!("{path}/")));
+            let path = if path.ends_with(".md") || is_directory {
+                path.clone()
+            } else {
+                format!("{path}.md")
+            };
+            let content = crate::hierarchical_memory::read_memory(
+                &base,
+                &project.notes,
+                &path,
+                *start,
+                *end,
+            )?;
+            Ok(json!({"cwd":cwd,"path":path,"content":content,"warning":warning}))
         }
     }
 }
 
 fn compact_and_save(
-    path: &Path,
+    writer: &store::Writer,
     project: &mut Project,
     session_id: &str,
     max_tokens: usize,
@@ -203,7 +171,7 @@ fn compact_and_save(
     session.pending = false;
     session.revision = session.revision.checked_add(1).ok_or("revision overflow")?;
     // Commit only the prefix covered by this summary before doing more model work.
-    save(path, project)?;
+    writer.save(project)?;
     Ok(skipped)
 }
 
@@ -235,7 +203,7 @@ pub fn process(
                 context.push_str(&format!(
                     "Task summary (revision {}):\n{}\n",
                     session.revision,
-                    serde_json::to_string(summary).map_err(|e| e.to_string())?
+                    summary.to_markdown()
                 ));
             }
             if session.pending || !session.cursor.is_complete() {
@@ -245,10 +213,10 @@ pub fn process(
             }
         }
         context.push_str("Project note index (use the read command below for relevant notes):\n");
-        for note in project.notes.values() {
-            let row = format!("{}\n", json!({"id":note.id,"title":note.title}));
+        for path in project.notes.keys() {
+            let row = format!("{path}\n");
             if context.len() + row.len() > 15000 {
-                context.push_str("[more notes available in memory file]\n");
+                context.push_str("[more notes available through search]\n");
                 break;
             }
             context.push_str(&row);
@@ -260,8 +228,8 @@ pub fn process(
             crate::quote(root)?,
             crate::quote(&event.cwd)?
         );
-        context.push_str(&format!("Read-only note access (no model call):\n{access} search 'keywords'\n{access} read 'note-id'\nSearch matches all words, case-insensitively; narrow the query if truncated. Use the confucius-memory skill when available.\n"));
-        context.push_str(&format!("Memory file: {}\nSummaries are generated automatically at PreCompact and when Stop crosses the budget.\n",path.display()));
+        context.push_str(&format!("Read-only note access (no model call):\n{access} search 'keywords'\n{access} read 'path/to/note.md'\nPositional search matches all words; use search --content-pattern 'regex' --path-pattern 'projects/*' --tag 'rust' for hierarchical search. Read '/' for directories; read 'note.md' --start-line 1 --end-line 20 for a range. Use the confucius-memory skill when available.\n"));
+        context.push_str(&format!("Memory directory: {}\nSummaries are generated automatically at PreCompact and when Stop crosses the budget.\n",path.with_extension("").display()));
         return Ok(
             json!({"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":context}}),
         );
@@ -274,24 +242,8 @@ pub fn process(
     if !transcript.is_file() {
         return Err("transcript_path is not a file".into());
     }
-    let mut builder = fs::DirBuilder::new();
-    builder.recursive(true);
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::DirBuilderExt;
-        builder.mode(0o700);
-    }
-    builder.create(root).map_err(|e| e.to_string())?;
-    let lock = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .open(path.with_extension("lock"))
-        .map_err(|e| e.to_string())?;
-    lock.try_lock_exclusive()
-        .map_err(|_| "memory is busy; history will be retried on the next hook".to_string())?;
-    let mut project = load(&path)?;
+    let writer = store::Writer::open(&path)?;
+    let mut project = writer.load()?;
     let session = project.sessions.entry(event.session.clone()).or_default();
     let (messages, cursor) = read_new(transcript, &session.cursor)?;
     if !messages.is_empty() {
@@ -309,7 +261,7 @@ pub fn process(
             let incoming = session.memory.messages.pop().expect("just pushed");
             if session.pending {
                 skipped_notes += compact_and_save(
-                    &path,
+                    &writer,
                     &mut project,
                     &event.session,
                     max_tokens,
@@ -342,7 +294,7 @@ pub fn process(
         session.cursor = message_cursor;
         if session.memory.messages.len() > MAX_HISTORY_MESSAGES {
             skipped_notes += compact_and_save(
-                &path,
+                &writer,
                 &mut project,
                 &event.session,
                 max_tokens,
@@ -359,7 +311,7 @@ pub fn process(
     session.cursor = cursor;
     if session.pending && event.kind == "PreCompact" {
         skipped_notes += compact_and_save(
-            &path,
+            &writer,
             &mut project,
             &event.session,
             max_tokens,
@@ -367,7 +319,7 @@ pub fn process(
             generate,
         )?;
     } else {
-        save(&path, &project)?;
+        writer.save(&project)?;
     }
     if skipped_notes > 0 || incomplete {
         return Ok(
@@ -380,7 +332,8 @@ pub fn process(
 mod tests {
     use super::*;
     use serde_json::json;
-    use std::fs;
+    use std::fs::{self, OpenOptions};
+    use std::io::Write;
 
     fn update() -> String {
         json!({"summary":{
@@ -390,8 +343,8 @@ mod tests {
             "technical_details":"src/parser.rs parse_value",
             "outstanding_items":"Review error path",
             "next_step":"Run regression on multibyte boundary"},
-            "notes":[{"id":"projects/parser/utf8", "title":"UTF-8 boundary bug",
-            "body":"Byte slicing was the cause; use character boundary checks", "evidence":["src/parser.rs; cargo test unicode_boundary passed"]}]}).to_string()
+            "operations":[{"operation":"write","path":"projects/parser/utf8.md", "tags":[],
+            "content":"# UTF-8 boundary bug\nByte slicing was the cause; use character boundary checks\nsrc/parser.rs; cargo test unicode_boundary passed"}]}).to_string()
     }
     fn event(dir: &Path, event: &str, session: &str) -> String {
         json!({"session_id":session,"cwd":dir,"hook_event_name":event,"source":"compact", "transcript_path":dir.join("rollout.jsonl")}).to_string()
@@ -762,9 +715,13 @@ mod tests {
     fn another_sessions_note_growth_cannot_stall_pending_history() {
         let dir = tempfile::tempdir().unwrap();
         let root = dir.path().join("store");
+        // Fill the available history budget while accounting for the actual
+        // prompt/schema. This tests note-growth isolation, not prompt length.
+        let history_bytes =
+            (8192 - crate::memory::Memory::default().request_tokens(8192) - 256) * 4;
         let records = [
             ("user", "Fix parser".to_string()),
-            ("assistant", "x".repeat(24000)),
+            ("assistant", "x".repeat(history_bytes)),
         ];
         let text=records.iter().map(|(role,text)|format!("{}\n",json!({"type":"response_item","payload":{"type":"message","role":role,"content":[{"type":"output_text","text":text}]}}))).collect::<String>();
         fs::write(dir.path().join("rollout.jsonl"), text).unwrap();
@@ -782,7 +739,7 @@ mod tests {
             serde_json::from_str(&event(dir.path(), "PreCompact", "two")).unwrap();
         other["transcript_path"] = json!(other_path);
         let mut result: Value = serde_json::from_str(&update()).unwrap();
-        result["notes"]=json!((0..3).map(|i|json!({"id":format!("topic-{i}"),"title":"discovery","body":"z".repeat(4000),"evidence":["source"]})).collect::<Vec<_>>());
+        result["operations"]=json!((0..3).map(|i|json!({"operation":"write","path":format!("topic-{i}.md"),"tags":[],"content":"z".repeat(4000)})).collect::<Vec<_>>());
         process(&root, &other.to_string(), 8192, 1024, &mut |_, _| {
             Ok(result.to_string())
         })
@@ -793,6 +750,61 @@ mod tests {
             8192,
             1024,
             &mut |_, _| Ok(update()),
+        )
+        .unwrap();
+    }
+    #[test]
+    fn legacy_pending_history_is_summarized_once_after_migration() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path().join("store");
+        fs::create_dir(&root).unwrap();
+        trajectory(dir.path());
+        let (records, cursor) = read_new(
+            &dir.path().join("rollout.jsonl"),
+            &crate::transcript::Cursor::default(),
+        )
+        .unwrap();
+        let messages: Vec<_> = records.into_iter().map(|(message, _)| message).collect();
+        // v1 Stop below the compaction threshold saved messages with an advanced cursor.
+        let legacy = json!({"version":1,"sessions":{"one":{"cursor":cursor,"memory":{"messages":messages,"summary":null},"revision":0,"pending":true}},"notes":{}});
+        let path = project_path(&root, &dir.path().canonicalize().unwrap()).unwrap();
+        let original = legacy.to_string();
+        fs::write(&path, &original).unwrap();
+        let mut calls = 0;
+        process(
+            &root,
+            &event(dir.path(), "PreCompact", "one"),
+            32000,
+            12000,
+            &mut |prompt, _| {
+                calls += 1;
+                assert!(prompt.contains("Fix Unicode parser"));
+                assert!(prompt.contains("cargo test: 8 passed; inspect error path"));
+                Ok(update())
+            },
+        )
+        .unwrap();
+        assert_eq!(calls, 1);
+        assert_eq!(fs::read_to_string(&path).unwrap(), original);
+        let project = load(&path).unwrap();
+        assert_eq!(project.sessions["one"].revision, 1);
+        assert!(!project.sessions["one"].pending);
+        assert!(
+            path.with_extension("")
+                .join("sessions/one/summary.md")
+                .is_file()
+        );
+        assert!(
+            path.with_extension("")
+                .join("notes/projects/parser/utf8.md")
+                .is_file()
+        );
+        process(
+            &root,
+            &event(dir.path(), "PreCompact", "one"),
+            32000,
+            12000,
+            &mut |_, _| panic!("migrated prefix already summarized"),
         )
         .unwrap();
     }

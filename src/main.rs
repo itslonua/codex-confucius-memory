@@ -1,5 +1,7 @@
 mod app;
+pub mod hierarchical_memory;
 mod memory;
+pub mod store;
 mod transcript;
 mod worker;
 
@@ -11,7 +13,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-const HELP: &str = "codex-memory [OPTIONS] COMMAND\n\nCommands:\n  hook       Read Codex hook JSON on stdin (errors warn; never block)\n  compress   Force summarization; stdin: session_id, cwd, transcript_path\n  restore    Return saved context; stdin: session_id, cwd\n  hooks      Print native Codex hooks.json configuration\n  schema     Print the model output JSON schema\n  search QUERY  Find project notes matching all query words\n  read ID       Read one project note\n\nOptions:\n  --store PATH          Absolute memory directory (default: $CODEX_HOME/confucius-memory)\n  --cwd PATH            Project directory for search/read (default: current directory)\n  --codex PATH          Codex CLI executable (default: codex)\n  --model NAME          Summarizer model (default: hook model, then CLI default)\n  --max-tokens N        Estimated history threshold (default: 100000)\n  --retain-tokens N     Estimated history target (default: 50000)\n  --timeout-seconds N   Total model time per hook, 1..600 (default: 120)\n\nToken estimates use UTF-8 bytes/4. No native Codex transcript is rewritten.\n";
+const HELP: &str = "codex-memory [OPTIONS] COMMAND\n\nCommands:\n  hook       Read Codex hook JSON on stdin (errors warn; never block)\n  compress   Force summarization; stdin: session_id, cwd, transcript_path\n  restore    Return saved context; stdin: session_id, cwd\n  hooks      Print native Codex hooks.json configuration\n  schema     Print the model output JSON schema\n  search QUERY  Find project notes matching all query words\n  read PATH     Read a Markdown note or directory (legacy IDs accepted)\n\nHierarchical search: search --path-pattern GLOB --content-pattern REGEX --tag TAG --max-results N\nRead range: read PATH --start-line N --end-line N (-1 means EOF)\n\nOptions:\n  --store PATH          Absolute memory directory (default: $CODEX_HOME/confucius-memory)\n  --cwd PATH            Project directory for search/read (default: current directory)\n  --codex PATH          Codex CLI executable (default: codex)\n  --model NAME          Summarizer model (default: hook model, then CLI default)\n  --max-tokens N        Estimated history threshold (default: 100000)\n  --retain-tokens N     Estimated history target (default: 50000)\n  --timeout-seconds N   Total model time per hook, 1..600 (default: 120)\n\nToken estimates use UTF-8 bytes/4. No native Codex transcript is rewritten.\n";
 enum Command {
     Hook,
     Compress,
@@ -47,7 +49,14 @@ impl Options {
             cwd: None,
         };
         let mut command = None;
-        let mut args = args.into_iter();
+        let mut args = args.into_iter().peekable();
+        let mut path_pattern = None;
+        let mut content_pattern = None;
+        let mut tags = Vec::new();
+        let mut max_results = 20;
+        let mut search_filters = false;
+        let mut start_line = None;
+        let mut end_line = None;
         while let Some(arg) = args.next() {
             if matches!(
                 arg.as_str(),
@@ -62,16 +71,20 @@ impl Options {
                     "restore" => Command::Restore,
                     "hooks" => Command::Hooks,
                     "schema" => Command::Schema,
-                    "search" | "read" => {
-                        let value = args
-                            .next()
-                            .ok_or_else(|| format!("missing argument for {arg}"))?;
-                        Command::Lookup(if arg == "search" {
-                            app::Lookup::Search(value.try_into()?)
+                    "search" => {
+                        if args.peek().is_some_and(|value| !value.starts_with("--")) {
+                            Command::Lookup(app::Lookup::Search(args.next().unwrap().try_into()?))
                         } else {
-                            app::Lookup::Read(value.try_into()?)
-                        })
+                            Command::Lookup(app::Lookup::SearchMemory(
+                                hierarchical_memory::SearchInput::new(None, None, Vec::new(), 20)?,
+                            ))
+                        }
                     }
+                    "read" => Command::Lookup(app::Lookup::Read {
+                        path: args.next().ok_or("missing argument for read")?,
+                        start: None,
+                        end: None,
+                    }),
                     _ => unreachable!(),
                 });
                 continue;
@@ -80,6 +93,27 @@ impl Options {
                 .next()
                 .ok_or_else(|| format!("missing value for {arg}"))?;
             match arg.as_str() {
+                "--path-pattern" => {
+                    path_pattern = Some(value);
+                    search_filters = true;
+                }
+                "--content-pattern" => {
+                    content_pattern = Some(value);
+                    search_filters = true;
+                }
+                "--tag" => {
+                    tags.push(value);
+                    search_filters = true;
+                }
+                "--max-results" => {
+                    let count: i64 = value.parse().map_err(|_| "invalid max-results")?;
+                    max_results = count.max(0) as usize;
+                    search_filters = true;
+                }
+                "--start-line" => {
+                    start_line = Some(value.parse().map_err(|_| "invalid start-line")?)
+                }
+                "--end-line" => end_line = Some(value.parse().map_err(|_| "invalid end-line")?),
                 "--store" => options.store = value.into(),
                 "--cwd" => options.cwd = Some(value.into()),
                 "--codex" => options.codex = value.into(),
@@ -96,6 +130,30 @@ impl Options {
             }
         }
         options.command = command.ok_or("a command is required; see --help")?;
+        match &mut options.command {
+            Command::Lookup(app::Lookup::SearchMemory(input)) => {
+                *input = hierarchical_memory::SearchInput::new(
+                    path_pattern,
+                    content_pattern,
+                    tags,
+                    max_results,
+                )?;
+            }
+            _ if search_filters => {
+                return Err("search filters require search without a positional query".into());
+            }
+            _ => {}
+        }
+        match &mut options.command {
+            Command::Lookup(app::Lookup::Read { start, end, .. }) => {
+                *start = start_line;
+                *end = end_line;
+            }
+            _ if start_line.is_some() || end_line.is_some() => {
+                return Err("line ranges require read".into());
+            }
+            _ => {}
+        }
         if options.cwd.is_some() && !matches!(options.command, Command::Lookup(_)) {
             return Err("--cwd is only supported for search and read; hooks use event cwd".into());
         }

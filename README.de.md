@@ -11,7 +11,8 @@ des Gesprächs mitzunehmen.
 
 Der kleine Rust-Begleiter für Codex erstellt automatisch Zusammenfassungen zur
 Aufgabe und ausgewählte Projektnotizen. Der Hauptagent muss keine Checkpoints
-schreiben. Der Ansatz ist eine Adaption von Metas Confucius-Planner und Note-Taker.
+schreiben. Der Ansatz adaptiert Metas Confucius-Planner, Note-Taker und
+hierarchischen Speicher. Notizen liegen als Markdown-Dateien nach Themen geordnet vor.
 
 ## Was erhalten bleibt
 
@@ -40,7 +41,7 @@ kein weiterer Modellaufruf ausgelöst.
 
 ## Einstieg
 
-Benötigt werden **Rust ab 1.88**, `make` und eine angemeldete Codex CLI mit
+Benötigt werden **macOS oder Linux, Rust ab 1.88**, `make` und eine angemeldete Codex CLI mit
 passenden nativen Hooks und Worker-Optionen. Getestet mit **Codex CLI 0.161.0
 unter macOS**.
 
@@ -66,7 +67,8 @@ Pfad verfügbar bleiben, der bei der Erzeugung verwendet wurde.
 
 Der mitgelieferte [Memory-Skill](skills/confucius-memory/SKILL.md) hilft Codex,
 gespeicherte Erkenntnisse vor einer erneuten Untersuchung zu finden. `search`
-sucht passende Notizen, `read` liest eine einzelne Notiz — ohne Modellaufruf.
+sucht nach Wörtern oder nach Pfad, Inhalt und Tags. `read` öffnet Notizen,
+Zeilenbereiche oder Verzeichnisse, ohne Modellaufruf.
 Die Anleitung erklärt auch die Installation des Skills.
 
 Die [Anleitung auf Englisch](docs/usage.md) beschreibt Konfiguration, Budgets,
@@ -76,7 +78,9 @@ manuelle Befehle, Fehlerbehebung und Deinstallation.
 
 Der Speicher liegt lokal unter `$CODEX_HOME/confucius-memory`, andernfalls unter
 `$HOME/.codex/confucius-memory`. Neue Verzeichnisse erhalten private Zugriffsrechte.
-Snapshots werden atomar ersetzt; eine Projektsperre verhindert parallele Schreibzugriffe.
+Zusammenfassungen und Notizen sind Markdown-Dateien; Fortsetzungsdaten bleiben
+getrennt. Eine Projektsperre und ein Wiederherstellungsjournal sichern Änderungen.
+Bestehende JSON-Speicher werden beim ersten Schreiben migriert; die Originaldatei bleibt erhalten.
 
 **Für Zusammenfassungen werden ausgewählte Gesprächsinhalte und Notizen an den
 Modelldienst des isolierten Codex-CLI-Workers gesendet.** Dabei gelten deine

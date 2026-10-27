@@ -12,7 +12,8 @@ ce contexte pour la suite de la conversation.
 Ce petit compagnon écrit en Rust crée automatiquement des résumés de tâche et
 des notes de projet ciblées pour Codex. L’agent principal n’a pas besoin de
 rédiger des points de reprise. Son fonctionnement est adapté du planificateur
-et du preneur de notes de Confucius, développé par Meta.
+du preneur de notes et de la mémoire hiérarchique de Confucius, développé par
+Meta. Les notes sont des fichiers Markdown organisés par sujet.
 
 ## Ce qu’il retient
 
@@ -41,7 +42,7 @@ progrès enregistré. Sans nouvel historique, aucun nouvel appel au modèle n’
 
 ## Premiers pas
 
-Il vous faut **Rust 1.88 ou ultérieur**, `make` et une CLI Codex authentifiée,
+Il vous faut **macOS ou Linux, Rust 1.88 ou ultérieur**, `make` et une CLI Codex authentifiée,
 compatible avec les hooks natifs et les options du worker. Testé avec
 **Codex CLI 0.161.0 sur macOS**.
 
@@ -67,8 +68,8 @@ l’emplacement utilisé lors de la génération.
 
 Le [skill de mémoire fourni](skills/confucius-memory/SKILL.md) aide Codex à
 retrouver les découvertes enregistrées avant de recommencer une investigation.
-`search` trouve les notes correspondantes et `read` lit une note, sans appel au
-modèle. Le guide explique aussi comment installer le skill.
+`search` retrouve les notes par mots ou par chemin, contenu et tags. `read`
+ouvre une note, une plage de lignes ou un répertoire, sans appel au modèle. Le guide explique aussi comment installer le skill.
 
 Le [guide d’utilisation en anglais](docs/usage.md) détaille la configuration,
 les budgets, les commandes manuelles, le dépannage et la désinstallation.
@@ -77,8 +78,10 @@ les budgets, les commandes manuelles, le dépannage et la désinstallation.
 
 La mémoire est stockée localement dans `$CODEX_HOME/confucius-memory`, ou dans
 `$HOME/.codex/confucius-memory` si `CODEX_HOME` n’est pas défini. Les nouveaux
-répertoires ont des permissions privées. Les instantanés sont remplacés de
-manière atomique et un verrou par projet évite les écritures concurrentes.
+répertoires ont des permissions privées. Les résumés et les notes sont en
+Markdown, séparés des données de reprise. Un verrou par projet et un journal de
+reprise assurent la cohérence des mises à jour. Les anciens fichiers JSON sont
+migrés à la première écriture, en conservant le fichier original.
 
 **La création des résumés envoie une sélection de l’historique et des notes au
 service de modèle utilisé par le worker Codex CLI isolé.** Celui-ci utilise

@@ -1,0 +1,139 @@
+[
+  {
+    "name": "exact_token_boundary",
+    "messages": [
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "tool",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": false
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      }
+    ],
+    "retain_tokens": 20,
+    "expected_tail": 3
+  },
+  {
+    "name": "first_message_exceeds_target",
+    "messages": [
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "tool",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": false
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      }
+    ],
+    "retain_tokens": 9,
+    "expected_tail": 4
+  },
+  {
+    "name": "stop_before_first_eligible_ai",
+    "messages": [
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      }
+    ],
+    "retain_tokens": 30,
+    "expected_tail": 1
+  },
+  {
+    "name": "no_ai_boundary",
+    "messages": [
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "tool",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": false
+      },
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      }
+    ],
+    "retain_tokens": 100,
+    "expected_tail": 3
+  },
+  {
+    "name": "initial_request_only",
+    "messages": [
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      }
+    ],
+    "retain_tokens": 100,
+    "expected_tail": 1
+  },
+  {
+    "name": "codex_tool_fragment_is_not_ai_boundary",
+    "messages": [
+      {
+        "role": "user",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": false
+      },
+      {
+        "role": "tool",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": false
+      },
+      {
+        "role": "assistant",
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "boundary": true
+      }
+    ],
+    "retain_tokens": 40,
+    "expected_tail": 3
+  }
+]
