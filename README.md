@@ -10,7 +10,8 @@ helps carry that context into the next stage of the conversation.
 
 A small Rust companion for Codex, it automatically creates task summaries and
 selective project notes. The main agent does not need to write checkpoints.
-The memory workflow is adapted from Meta's Confucius planner and note-taker.
+The memory workflow is adapted from Meta's Confucius planner, note-taker and
+hierarchical memory. Notes live in Markdown files organized by topic.
 
 ## What it remembers
 
@@ -36,7 +37,7 @@ progress. Unchanged history does not trigger another model call.
 
 ## Get started
 
-You need **Rust 1.88+**, `make`, and an authenticated Codex CLI with compatible
+You need **macOS or Linux, Rust 1.88+**, `make`, and an authenticated Codex CLI with compatible
 native hooks and worker flags. Tested with **Codex CLI 0.161.0 on macOS**.
 
 ```sh
@@ -60,7 +61,8 @@ Keep the built binary at the path used when generating the configuration.
 
 The bundled [memory skill](skills/confucius-memory/SKILL.md) helps Codex find
 saved discoveries before repeating an investigation. `search` finds matching
-notes and `read` opens one note, without a model call. The usage guide includes
+notes by words or path/content/tag filters; `read` opens a note, a line range or
+a directory, without a model call. The usage guide includes
 skill installation instructions.
 
 See the [usage guide](docs/usage.md) for configuration, budgets, manual commands,
@@ -70,7 +72,9 @@ troubleshooting, and removal.
 
 Memory is stored locally in `$CODEX_HOME/confucius-memory`, or
 `$HOME/.codex/confucius-memory` when `CODEX_HOME` is unset. New directories are
-private, snapshots are replaced atomically, and writers use a project lock.
+private. Summaries and notes are Markdown; continuation data stays separate.
+A project lock and recovery journal keep updates consistent, and existing JSON
+stores migrate on their first write while retaining the original file.
 
 **Summarization sends selected conversation history and notes to the model
 service used by the isolated Codex CLI worker.** It uses your existing Codex

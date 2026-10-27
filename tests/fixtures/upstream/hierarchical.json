@@ -1,0 +1,2732 @@
+{
+  "compatibility_cases": [
+    {
+      "name": "unquoted_yes",
+      "input": "---\ntags: [yes]\n---\nBody",
+      "expected": {
+        "error_type": "ValidationError"
+      },
+      "derivation": "executed_upstream_parse_plus_MemoryNode"
+    },
+    {
+      "name": "unquoted_on",
+      "input": "---\ntags: [on]\n---\nBody",
+      "expected": {
+        "error_type": "ValidationError"
+      },
+      "derivation": "executed_upstream_parse_plus_MemoryNode"
+    },
+    {
+      "name": "unquoted_date",
+      "input": "---\ntags: [2026-10-27]\n---\nBody",
+      "expected": {
+        "error_type": "ValidationError"
+      },
+      "derivation": "executed_upstream_parse_plus_MemoryNode"
+    },
+    {
+      "name": "quoted_yaml11_scalars",
+      "input": "---\ntags: [\"yes\", \"on\", \"2026-10-27\"]\n---\nBody",
+      "expected": {
+        "value": [
+          [
+            "yes",
+            "on",
+            "2026-10-27"
+          ],
+          "Body"
+        ]
+      },
+      "derivation": "executed_upstream_parse_plus_MemoryNode"
+    },
+    {
+      "name": "duplicate_tags",
+      "input": "---\ntags: [first]\ntags: [second]\n---\nBody",
+      "expected": {
+        "value": [
+          [
+            "second"
+          ],
+          "Body"
+        ]
+      },
+      "derivation": "executed_upstream_parse_plus_MemoryNode"
+    }
+  ],
+  "upstream_commit": "bdeb74b3d828bfbb2c61030c6201fa9da44e69d0",
+  "license": "MIT; LICENSE-META",
+  "execution": "Original AST function bodies; no full Analect runtime. Scanner session base-dir resolution replaced by a temporary input directory. Edit functions executed with RapidFuzz (version recorded per case).",
+  "source_sha256": {
+    "confucius/orchestrator/extensions/memory/hierarchical/types.py": "9800ae71efa02e6996f5c2e2fce0d3d4bfda548f0f2b37dfdf68ed8c94be58b5",
+    "confucius/orchestrator/extensions/memory/hierarchical/utils.py": "f8b565b90e98cfa585b6d80e728bdbef4b4084bea72822b56c6dcb32a361a6f4",
+    "confucius/orchestrator/extensions/memory/hierarchical/extension.py": "a2c85d49b9cf80e6bb3c3c16862363ae4925e412d85fc60e22bc4a29f29c0ec2",
+    "confucius/orchestrator/extensions/file/utils.py": "74e127f754c6a5e2fb99c08e43a4e72fb422e547111c7c0a3017287f3348846a"
+  },
+  "cases": [
+    {
+      "name": "plain",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "# Note\n"
+      },
+      "expected": {
+        "value": [
+          [],
+          "# Note\n"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "tags",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\ntags:\n- rust\n- memory\n---\n# Note\n"
+      },
+      "expected": {
+        "value": [
+          [
+            "rust",
+            "memory"
+          ],
+          "# Note\n"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "note_taker_metadata",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\nid: note\ntitle: Note\nkeywords: [rust]\n---\nBody\n"
+      },
+      "expected": {
+        "value": [
+          [],
+          "---\nid: note\ntitle: Note\nkeywords: [rust]\n---\nBody\n"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "invalid_yaml",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\ntags: [\n---\nBody"
+      },
+      "expected": {
+        "value": [
+          [],
+          "---\ntags: [\n---\nBody"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "wrong_type",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\ntags: rust\n---\nBody"
+      },
+      "expected": {
+        "value": [
+          [],
+          "---\ntags: rust\n---\nBody"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "empty_tags",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\ntags: []\n---\nBody"
+      },
+      "expected": {
+        "value": [
+          [],
+          "Body"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "no_closing",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\ntags: [rust]"
+      },
+      "expected": {
+        "value": [
+          [],
+          "---\ntags: [rust]"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "crlf",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\r\ntags: [rust]\r\n---\r\nBody"
+      },
+      "expected": {
+        "value": [
+          [],
+          "---\r\ntags: [rust]\r\n---\r\nBody"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "nonstring_tag",
+      "function": "parse_frontmatter",
+      "input": {
+        "content": "---\ntags: [12, true]\n---\nBody"
+      },
+      "expected": {
+        "value": [
+          [
+            12,
+            true
+          ],
+          "Body"
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "no_tags",
+      "function": "create_content_with_frontmatter",
+      "input": {
+        "content": "Body\n",
+        "tags": []
+      },
+      "expected": {
+        "value": "Body\n"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "tag_serialization",
+      "function": "create_content_with_frontmatter",
+      "input": {
+        "content": "Body\n",
+        "tags": [
+          "rust",
+          "memory"
+        ]
+      },
+      "expected": {
+        "value": "---\ntags:\n- rust\n- memory\n---\nBody\n"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "quoted_tags",
+      "function": "create_content_with_frontmatter",
+      "input": {
+        "content": "Body\n",
+        "tags": [
+          "true",
+          "a: b",
+          "café"
+        ]
+      },
+      "expected": {
+        "value": "---\ntags:\n- 'true'\n- 'a: b'\n- \"caf\\xE9\"\n---\nBody\n"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "yaml11_ambiguous_strings",
+      "function": "create_content_with_frontmatter",
+      "input": {
+        "content": "Body\n",
+        "tags": [
+          "yes",
+          "on",
+          "2026-10-27",
+          "linenext",
+          "line next"
+        ]
+      },
+      "expected": {
+        "value": "---\ntags:\n- 'yes'\n- 'on'\n- '2026-10-27'\n- \"line\\Nnext\"\n- \"line\\Lnext\"\n---\nBody\n"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "empty",
+      "function": "view_file_content",
+      "input": {
+        "start_line": null,
+        "end_line": null,
+        "max_view_lines": null,
+        "content": ""
+      },
+      "expected": {
+        "value": "1|"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "trailing_newline",
+      "function": "view_file_content",
+      "input": {
+        "start_line": null,
+        "end_line": null,
+        "max_view_lines": null,
+        "content": "a\n"
+      },
+      "expected": {
+        "value": "1|a\n2|"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "partial",
+      "function": "view_file_content",
+      "input": {
+        "start_line": 2,
+        "end_line": 2,
+        "max_view_lines": null,
+        "content": "α\nβ\nγ"
+      },
+      "expected": {
+        "value": "(1 line(s) above)\n2|β\n(1 line(s) below)"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "end_sentinel",
+      "function": "view_file_content",
+      "input": {
+        "start_line": null,
+        "end_line": -1,
+        "max_view_lines": null,
+        "content": "a\nb"
+      },
+      "expected": {
+        "value": "1|a\n2|b"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "beyond_eof",
+      "function": "view_file_content",
+      "input": {
+        "start_line": 4,
+        "end_line": 5,
+        "max_view_lines": null,
+        "content": "a"
+      },
+      "expected": {
+        "value": "(3 line(s) above)"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "zero_start",
+      "function": "view_file_content",
+      "input": {
+        "start_line": 0,
+        "end_line": null,
+        "max_view_lines": null,
+        "content": "a"
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "message": "Line numbers must be positive"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "reversed",
+      "function": "view_file_content",
+      "input": {
+        "start_line": 2,
+        "end_line": 1,
+        "max_view_lines": null,
+        "content": "a\nb"
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "message": "Start line must be less than or equal to end line"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "raw_frontmatter",
+      "function": "view_file_content",
+      "input": {
+        "start_line": 2,
+        "end_line": 4,
+        "max_view_lines": null,
+        "content": "---\ntags: [rust]\n---\nBody"
+      },
+      "expected": {
+        "value": "(1 line(s) above)\n2|tags: [rust]\n3|---\n4|Body"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "filesystem_tree",
+      "function": "_load_memory_from_filesystem",
+      "input": {
+        "files": {
+          "a/b/note.md": "---\ntags: [rust]\n---\nContains [ and café\n",
+          "z.md": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          ".hidden.md": "Hidden",
+          "ignored.txt": "ignored"
+        },
+        "directories": [
+          "empty"
+        ]
+      },
+      "expected": {
+        "value": [
+          {
+            "path": ".hidden.md",
+            "name": ".hidden.md",
+            "content": "Hidden",
+            "tags": [],
+            "children": []
+          },
+          {
+            "path": "a/b",
+            "name": "a/b",
+            "content": "",
+            "tags": [],
+            "children": [
+              {
+                "path": "a/b/note.md",
+                "name": "note.md",
+                "content": "Contains [ and café\n",
+                "tags": [
+                  "rust"
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "path": "z.md",
+            "name": "z.md",
+            "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "tags": [],
+            "children": []
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast_after_base_dir_resolution"
+    },
+    {
+      "name": "all",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": null,
+        "tags": null,
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": [
+          {
+            "path": ".hidden.md",
+            "tags": [],
+            "content_preview": "Hidden"
+          },
+          {
+            "path": "a/b",
+            "tags": [],
+            "content_preview": ""
+          },
+          {
+            "path": "a/b/note.md",
+            "tags": [
+              "rust"
+            ],
+            "content_preview": "Contains [ and café\n"
+          },
+          {
+            "path": "z.md",
+            "tags": [],
+            "content_preview": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..."
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "cross_directory_star",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": "a/*",
+        "content_pattern": null,
+        "tags": null,
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": [
+          {
+            "path": "a/b",
+            "tags": [],
+            "content_preview": ""
+          },
+          {
+            "path": "a/b/note.md",
+            "tags": [
+              "rust"
+            ],
+            "content_preview": "Contains [ and café\n"
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "md_suffix_removed",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": "a/*.md",
+        "content_pattern": null,
+        "tags": null,
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": []
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "invalid_regex_literal",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": "[",
+        "tags": null,
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": [
+          {
+            "path": "a/b/note.md",
+            "tags": [
+              "rust"
+            ],
+            "content_preview": "Contains [ and café\n"
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "case_insensitive",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": "CAFÉ",
+        "tags": null,
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": [
+          {
+            "path": "a/b/note.md",
+            "tags": [
+              "rust"
+            ],
+            "content_preview": "Contains [ and café\n"
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "all_tags",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": null,
+        "tags": [
+          "rust",
+          "missing"
+        ],
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": []
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "zero_limit",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": null,
+        "tags": null,
+        "max_results": 0
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": []
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "one_limit",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": null,
+        "tags": null,
+        "max_results": 1
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": [
+          {
+            "path": ".hidden.md",
+            "tags": [],
+            "content_preview": "Hidden"
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "python_lookbehind",
+      "function": "collect_matching_nodes",
+      "input": {
+        "path_pattern": null,
+        "content_pattern": "(?<=Contains )\\[",
+        "tags": null,
+        "max_results": 20
+      },
+      "tree_fixture": "filesystem_tree",
+      "expected": {
+        "value": [
+          {
+            "path": "a/b/note.md",
+            "tags": [
+              "rust"
+            ],
+            "content_preview": "Contains [ and café\n"
+          }
+        ]
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "full_line_spaces",
+      "function": "_replace_lines_in_original_content",
+      "input": {
+        "file_content": "before\n\nend",
+        "find_text": "before\n\nend",
+        "original_file_content": "before\n   \nend",
+        "replace_text": "changed"
+      },
+      "expected": {
+        "value": "changed"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "substring",
+      "function": "_replace_lines_in_original_content",
+      "input": {
+        "file_content": "prefix before\n\nend",
+        "find_text": "before",
+        "original_file_content": "prefix before\n   \nend",
+        "replace_text": "changed"
+      },
+      "expected": {
+        "value": "prefix changed\n\nend"
+      },
+      "derivation": "executed_upstream_ast"
+    },
+    {
+      "name": "edit_full_line_blank",
+      "function": "replace_in_file",
+      "input": {
+        "content": "before\n   \nend",
+        "old_str": "before\n\nend",
+        "new_str": "changed"
+      },
+      "expected": {
+        "value": "changed"
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "edit_substring_blank",
+      "function": "replace_in_file",
+      "input": {
+        "content": "prefix before\n   \nend",
+        "old_str": "before",
+        "new_str": "changed"
+      },
+      "expected": {
+        "value": "prefix changed\n\nend"
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "edit_overlapping",
+      "function": "replace_in_file",
+      "input": {
+        "content": "aaa",
+        "old_str": "aa",
+        "new_str": "x"
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "unchanged": true
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "edit_crlf",
+      "function": "replace_in_file",
+      "input": {
+        "content": "a\r\nb\r\n",
+        "old_str": "b",
+        "new_str": "x"
+      },
+      "expected": {
+        "value": "a\nx\n"
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "edit_empty",
+      "function": "replace_in_file",
+      "input": {
+        "content": "abc",
+        "old_str": "",
+        "new_str": "x"
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "unchanged": true
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "edit_not_found",
+      "function": "replace_in_file",
+      "input": {
+        "content": "abc",
+        "old_str": "uvwxyz",
+        "new_str": "x"
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "unchanged": true
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "edit_near_match",
+      "function": "replace_in_file",
+      "input": {
+        "content": "abcdefghij",
+        "old_str": "abcdefghiX",
+        "new_str": "x"
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "unchanged": true
+      },
+      "derivation": "executed_upstream_ast_with_rapidfuzz_3.14.6"
+    },
+    {
+      "name": "a/* :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a/* :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a/*",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "a"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ab] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[ab]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "-"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "["
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "]"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!a] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!a]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "-"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[z-a-b] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[z-a-b]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a--b] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a--b]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "-"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[--0] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[--0]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "]"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[]] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[]]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "a"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "-"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "["
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[!]] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[!]]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "["
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[[] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[[]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "["
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[ :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a? :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a?",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "a"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "-"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "["
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "]"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "abc"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "** :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "**",
+        "text": ""
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "a"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "-"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "abc"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "a*b*c :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "a*b*c",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: a",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "a"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "b"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "c"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: -",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "-"
+      },
+      "expected": {
+        "value": true
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: [",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "["
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: ]",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "]"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: a/b",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "a/b"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: a/b/c",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "a/b/c"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: abc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "abc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: axbyc",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": "axbyc"
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    },
+    {
+      "name": "[a-b-c] :: ",
+      "function": "fnmatch",
+      "input": {
+        "pattern": "[a-b-c]",
+        "text": ""
+      },
+      "expected": {
+        "value": false
+      },
+      "derivation": "executed_python_fnmatch"
+    }
+  ]
+}

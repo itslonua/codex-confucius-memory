@@ -14,8 +14,8 @@ topics instead of duplicating them.
 
 Upstream uses a planner extension and a separate note-taking agent. This adaptation
 combines the two Markdown instruction files into one schema-constrained Codex
-request, producing both summary and notes. Splitting the files does not add a
-second model call. Both outputs are parsed before memory is changed, so a failed
+request, producing a summary and scoped Markdown write/edit operations. Splitting
+the files does not add a second model call. Both outputs are parsed before memory is changed, so a failed
 request leaves that batch available for retry. Python/LangChain orchestration is
 replaced by Rust. See
 `THIRD_PARTY_NOTICES.md` for the pinned source revision and `LICENSE-META` for
@@ -27,7 +27,8 @@ upstream attribution. This is an adaptation of the memory workflow, not the full
    It invokes the model only when the input budget/message threshold is reached.
 2. `PreCompact` also flushes pending history into a summary and selective notes.
 3. `SessionStart(startup|resume|compact)` injects the task summary and a bounded
-   project-note index. Full notes are available at the injected memory-file path.
+   project-note index. Full notes and directories are available through the
+   injected read/search commands.
 4. The summarizer runs in an isolated temporary directory using `codex exec
    --ignore-user-config --ephemeral`, a read-only sandbox, and disabled hooks,
    plugins, shell tools, multi-agent tools and skill search.
@@ -38,13 +39,14 @@ adaptation's own rolling summarizer input; the hook injects the compact summary,
 another full copy of retained tool output. No original rollout is rewritten.
 
 Task state is isolated by canonical working directory and session ID. Project
-notes are shared only within that directory, including `shared/` topic IDs.
+notes are shared only within that directory, including files under `shared/`.
 Different worktrees/subdirectories intentionally have separate memory scopes.
 Memory is historical evidence, not instructions or authorization.
 
 ## Build and checks
 
-Requires Rust >=1.88 and a Codex CLI supporting the flags in `src/worker.rs`.
+Requires macOS or Linux, Rust >=1.88 and a Codex CLI supporting the flags in
+`src/worker.rs`.
 Validated with Codex CLI 0.161.0 on macOS. Uses existing Codex CLI authentication;
 no extra API key or direct API implementation is required. Custom providers in
 user config are not inherited by the isolated worker. `--model` overrides the
@@ -76,10 +78,38 @@ left available for recovery. Rebuild the release binary after source changes.
 
 Default memory directory: `$CODEX_HOME/confucius-memory`, falling back to
 `$HOME/.codex/confucius-memory`. Override with absolute `--store PATH`.
-A project hash names a JSON file containing session histories and project notes.
-New directories are private; data files are atomically replaced with mode 0600.
-A per-project OS lock prevents concurrent writers. A busy hook warns and retries
-on a later lifecycle event; it does not block the user's task.
+Each canonical working directory has a project hash. Documents use Markdown:
+
+```text
+<store>/<project-hash>/
+  notes/shared/.../*.md
+  notes/projects/.../*.md
+  sessions/<session-id>/summary.md
+  runtime.json
+```
+
+`runtime.json` holds continuation data (retained messages, cursor, pending state,
+revision), not summary or note text. Notes are ordinary Markdown with metadata;
+the hierarchy is reconstructed from their paths rather than a separate index.
+
+New directories are private and data files use mode 0600. A project lock and a
+redo journal coordinate document and runtime updates. Readers report a pending
+recovery instead of serving a partial commit; the next writer retries recovery.
+Do not remove a recovery journal or edit runtime data. A busy hook warns and
+retries on a later lifecycle event without blocking the user's task.
+
+Existing `<project-hash>.json` stores remain readable. The first successful
+writer migrates them, retaining the original file and all session continuation
+data. Read-only commands never trigger migration. The filesystem boundary uses
+Unix directory handles and no-follow opens; Windows is not supported.
+
+Before publishing an update or migration, storage rejects distinct note paths or
+session IDs that the filesystem treats as the same name. This includes case and
+Unicode-normalization collisions on filesystems that equate those spellings. It
+also rejects conflicting spellings already present in the destination tree. A
+rejected update leaves existing documents and the legacy JSON intact and does not
+publish a recovery journal. Names are never silently renamed or lowercased;
+resolve the conflicting names before retrying.
 
 ## Find and read saved notes
 
@@ -95,11 +125,34 @@ by the hooks; worktrees and subdirectories have separate memory. Keep `--store`
 when your hooks use a custom store. SessionStart supplies commands with the
 correct executable, store and directory already quoted.
 
-Search requires all whitespace-separated words to occur in the ID, title, body
-or evidence, ignoring case. It returns at most 20 IDs and titles in ID order,
-with `total_matches` and `truncated`. Narrow a truncated search. This is literal
-text search, not semantic or regular-expression search. Read returns one full
-note; a missing ID is an error. An empty project returns no search matches.
+Positional search requires all whitespace-separated words to occur in a path or
+raw Markdown, ignoring case. Its JSON `matches` array contains at most 20
+objects with a `path` field, in path order, alongside `total_matches` and
+`truncated`; narrow a truncated search.
+
+For the Confucius hierarchy filters:
+
+```sh
+./target/release/codex-memory --cwd /absolute/project search --path-pattern 'projects/parser/*' --content-pattern 'UTF-8|boundary' --tag rust --max-results 20
+./target/release/codex-memory --cwd /absolute/project read projects/parser/utf8_boundary.md --start-line 1 --end-line 40
+./target/release/codex-memory --cwd /absolute/project read '/'
+```
+
+Filters combine with AND. Repeating `--tag` requires every tag. Path glob matching
+removes `.md` before matching, as the original implementation does; `*` can cross
+`/`. The JSON `results` array contains `path`, `tags` and `content_preview`
+fields and may include directories. `--max-results` defaults to 20; this interface
+does not return a total count or truncation flag. Do not combine these filters
+with a positional query.
+Content regex is case-insensitive and has an execution budget. Some Python regex
+features are unsupported and return an explicit error; use a simpler expression
+or the literal search command. Recognized malformed patterns use the upstream
+literal-substring fallback. See compatibility notes below.
+
+Read returns `path` and `content`: numbered raw Markdown for a file, including
+frontmatter, or a sorted one-level directory listing. `--end-line -1` means EOF.
+Older IDs without `.md` still resolve to their Markdown file. Missing files are
+errors; an empty project has no search results.
 
 Install the bundled skill to teach Codex when to use these commands:
 
@@ -140,8 +193,9 @@ The instruction to avoid secrets in notes is not automatic secret redaction.
 Only enable this for conversations you are comfortable sending through Codex.
 
 The isolated worker ignores user configuration, so custom providers, including
-local model endpoints, are not inherited. This version has been tested on macOS;
-other platforms have not been verified.
+local model endpoints, are not inherited. The secure storage boundary supports
+macOS and Linux. This change was tested on macOS; a Linux runtime run is not
+implied by that check. Windows is unsupported.
 
 ## Budgets and limits
 
@@ -165,8 +219,8 @@ other platforms have not been verified.
 - A single message/initial request that cannot fit the configured model budget
   fails explicitly, without silently truncating source evidence. Raise the budget
   within the model's limits, or inspect the source before retrying.
-- Project snapshots are bounded to 32 MiB. Very old sessions need manual archival
-  before that limit; do not edit the file while a hook is running.
+- Project state is bounded to 32 MiB. Very old sessions may require archival;
+  do not edit active documents, runtime files or journals while hooks run.
 
 Codex's rollout format is not a stable API. The adapter supports text messages,
 function/custom tool calls and results, skips duplicate event records and hidden
@@ -181,3 +235,20 @@ UTF-8-safe JSON processing, partial records, rewritten history, lifetime rollout
 above 64 MiB, and real subprocess timeouts. Two additional live model smoke cycles
 were checked manually on synthetic data, including a user correction and note
 update without duplication. This is not a long-horizon benchmark.
+
+## Compatibility with Confucius
+
+This ports selected memory behavior rather than the whole agent runtime. The
+note-taker keeps its `id`, `title`, optional `description`/`keywords`, focused
+Markdown body and shared/projects paths. Hierarchy `tags` are separate; keywords
+are not silently converted into tags. Write replaces a document, while edit
+requires one exact match after whitespace-only-line normalization. Fuzzy error
+suggestions are not reproduced and fuzzy changes are never applied.
+
+The Rust YAML parser differs from PyYAML for unquoted `yes`/`on` and date-looking
+values, and for duplicate mapping keys. Use quoted strings and unique keys for
+portable tags. Generated tags are always quoted so PyYAML also reads them as
+strings. Unsupported Python regex constructs and Unicode case matching can differ;
+this is not a general Python regex emulator. Directory reads expose stored Markdown
+documents, not arbitrary files in the directory. Delete/import tools, reminder
+scheduling and the original artifact UI are outside this adaptation.
