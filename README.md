@@ -26,9 +26,10 @@ subdirectories keep separate memory.
 
 ## How it fits into Codex
 
-Native hooks do the work: `Stop` processes new history and summarizes when a
-budget is reached; `PreCompact` summarizes pending history before compaction;
-`SessionStart` restores the task summary and an index of project notes.
+Native background hooks do the work: `Stop` processes new history and summarizes
+when a budget is reached; `PreCompact` schedules pending history for summarization
+without delaying compaction. `SessionStart` reads saved context synchronously with
+a three-second timeout; it never calls the model.
 
 This supplements Codex's built-in compaction. It does not replace that algorithm
 or rewrite the original conversation. Each successful summary is saved with the
@@ -80,7 +81,10 @@ stores migrate on their first write while retaining the original file.
 service used by the isolated Codex CLI worker.** It uses your existing Codex
 authentication and normal usage allowance. The worker does not inherit custom
 user configuration, including custom provider settings. Model calls can add
-latency; this is not an offline summarizer.
+background work; this is not an offline summarizer. A newly generated summary may
+not be ready at the next startup. Codex cancels unfinished background hooks when
+the session ends; retained transcripts allow a later hook to retry. Review changed
+hook definitions with `/hooks` before relying on the new configuration.
 
 ## Benchmarks
 

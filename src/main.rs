@@ -186,8 +186,12 @@ impl Options {
             command.push_str(&format!(" --model {}", quote(Path::new(model))?));
         }
         command.push_str(" hook");
-        let handler = json!({"type":"command","command":command,"timeout":self.timeout.as_secs()+10,"statusMessage":"Updating Confucius memory"});
+        let handler = json!({"type":"command","command":command,"timeout":self.timeout.as_secs()+10,"async":true,"statusMessage":"Updating Confucius memory"});
         let mut restore = handler.clone();
+        // Restoration is local read-only I/O. Keep its startup wait bounded;
+        // generation runs in native background hooks and retains its own budget.
+        restore["async"] = json!(false);
+        restore["timeout"] = json!(3);
         restore["additionalContextLimit"] = json!(5000);
         restore["statusMessage"] = json!("Restoring Confucius memory");
         Ok(
