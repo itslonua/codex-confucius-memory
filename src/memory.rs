@@ -34,27 +34,19 @@ pub struct Summary {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(try_from = "RawNote")]
-pub struct Note {
-    pub id: String,
-    pub title: Text,
-    body: Text,
-    evidence: Vec<Text>,
+#[serde(try_from = "String")]
+pub struct NoteId(String);
+impl NoteId {
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
 }
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct RawNote {
-    id: String,
-    title: Text,
-    body: Text,
-    evidence: Vec<Text>,
-}
-impl TryFrom<RawNote> for Note {
+impl TryFrom<String> for NoteId {
     type Error = String;
-    fn try_from(raw: RawNote) -> Result<Self, String> {
-        if raw.id.is_empty()
-            || raw.id.len() > 120
-            || raw.id.split('/').any(|s| {
+    fn try_from(value: String) -> Result<Self, String> {
+        if value.is_empty()
+            || value.len() > 120
+            || value.split('/').any(|s| {
                 s.is_empty()
                     || !s
                         .bytes()
@@ -63,6 +55,29 @@ impl TryFrom<RawNote> for Note {
         {
             return Err("note id must be a slash-separated slug".into());
         }
+        Ok(Self(value))
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(try_from = "RawNote")]
+pub struct Note {
+    pub id: NoteId,
+    pub title: Text,
+    body: Text,
+    evidence: Vec<Text>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RawNote {
+    id: NoteId,
+    title: Text,
+    body: Text,
+    evidence: Vec<Text>,
+}
+impl TryFrom<RawNote> for Note {
+    type Error = String;
+    fn try_from(raw: RawNote) -> Result<Self, String> {
         if raw.evidence.is_empty() || raw.evidence.len() > 8 {
             return Err("notes require 1..8 evidence references".into());
         }
@@ -74,6 +89,26 @@ impl TryFrom<RawNote> for Note {
         })
     }
 }
+impl Note {
+    pub fn matches(&self, terms: &[String]) -> bool {
+        let evidence = self
+            .evidence
+            .iter()
+            .map(|text| text.0.as_str())
+            .collect::<Vec<_>>()
+            .join("\n");
+        let text = format!(
+            "{}\n{}\n{}\n{}",
+            self.id.as_str(),
+            self.title.0,
+            self.body.0,
+            evidence
+        )
+        .to_lowercase();
+        terms.iter().all(|term| text.contains(term))
+    }
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Update {
@@ -204,7 +239,7 @@ impl Memory {
         let mut updated_notes = notes.clone();
         let mut skipped = 0;
         for note in update.notes {
-            let id = note.id.clone();
+            let id = note.id.as_str().to_owned();
             let previous = updated_notes.insert(id.clone(), note);
             if updated_notes.len() > 128
                 || serde_json::to_vec(&updated_notes)
@@ -301,7 +336,7 @@ mod tests {
         let mut notes = BTreeMap::new();
         for i in 0..128 {
             let n:Note=serde_json::from_value(json!({"id":format!("note-{i}"),"title":"title","body":"body","evidence":["source"]})).unwrap();
-            notes.insert(n.id.clone(), n);
+            notes.insert(n.id.as_str().to_owned(), n);
         }
         let update=json!({"summary":{"conversation_context":"context","technical_decisions":"decisions","implementation_progress":"progress","technical_details":"details","outstanding_items":"issues","next_step":"step"},"notes":[{"id":"new-note","title":"title","body":"body","evidence":["source"]}]}).to_string();
         memory

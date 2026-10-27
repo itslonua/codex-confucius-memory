@@ -64,6 +64,11 @@ die neuen Einträge in Codex über `/hooks`; auch die Projektkonfiguration muss
 als vertrauenswürdig eingestuft sein. Das Binary muss anschließend unter dem
 Pfad verfügbar bleiben, der bei der Erzeugung verwendet wurde.
 
+Der mitgelieferte [Memory-Skill](skills/confucius-memory/SKILL.md) hilft Codex,
+gespeicherte Erkenntnisse vor einer erneuten Untersuchung zu finden. `search`
+sucht passende Notizen, `read` liest eine einzelne Notiz — ohne Modellaufruf.
+Die Anleitung erklärt auch die Installation des Skills.
+
 Die [Anleitung auf Englisch](docs/usage.md) beschreibt Konfiguration, Budgets,
 manuelle Befehle, Fehlerbehebung und Deinstallation.
 

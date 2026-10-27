@@ -81,9 +81,41 @@ New directories are private; data files are atomically replaced with mode 0600.
 A per-project OS lock prevents concurrent writers. A busy hook warns and retries
 on a later lifecycle event; it does not block the user's task.
 
+## Find and read saved notes
+
+These commands do not call a model, read stdin, or modify memory:
+
+```sh
+./target/release/codex-memory --cwd /absolute/project search "UTF-8 slicing"
+./target/release/codex-memory --cwd /absolute/project read projects/parser/utf8
+```
+
+`--cwd` defaults to the current directory. Use the exact working directory used
+by the hooks; worktrees and subdirectories have separate memory. Keep `--store`
+when your hooks use a custom store. SessionStart supplies commands with the
+correct executable, store and directory already quoted.
+
+Search requires all whitespace-separated words to occur in the ID, title, body
+or evidence, ignoring case. It returns at most 20 IDs and titles in ID order,
+with `total_matches` and `truncated`. Narrow a truncated search. This is literal
+text search, not semantic or regular-expression search. Read returns one full
+note; a missing ID is an error. An empty project returns no search matches.
+
+Install the bundled skill to teach Codex when to use these commands:
+
+```sh
+mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
+cp -R skills/confucius-memory "${CODEX_HOME:-$HOME/.codex}/skills/"
+```
+
+If a skill with that name already exists, review it before replacing it. Reload
+skills or start a new Codex session to discover it. The skill uses the commands
+provided by the hook, or `codex-memory` on PATH when no hook context is available.
+It does not ask the main agent to write checkpoints.
+
 ## Manual smoke test
 
-All runtime commands accept a single JSON object on stdin:
+The `compress` and `restore` commands accept a single JSON object on stdin:
 
 ```sh
 printf '%s\n' '{"session_id":"demo","cwd":"/absolute/workspace","transcript_path":"/absolute/rollout.jsonl"}' |

@@ -11,7 +11,15 @@ use std::{
     time::{Duration, Instant},
 };
 
-const HELP: &str = "codex-memory [OPTIONS] COMMAND\n\nCommands:\n  hook       Read Codex hook JSON on stdin (errors warn; never block)\n  compress   Force summarization; stdin: session_id, cwd, transcript_path\n  restore    Return saved context; stdin: session_id, cwd\n  hooks      Print native Codex hooks.json configuration\n  schema     Print the model output JSON schema\n\nOptions:\n  --store PATH          Absolute memory directory (default: $CODEX_HOME/confucius-memory)\n  --codex PATH          Codex CLI executable (default: codex)\n  --model NAME          Summarizer model (default: hook model, then CLI default)\n  --max-tokens N        Estimated history threshold (default: 100000)\n  --retain-tokens N     Estimated history target (default: 50000)\n  --timeout-seconds N   Total model time per hook, 1..600 (default: 120)\n\nToken estimates use UTF-8 bytes/4. No native Codex transcript is rewritten.\n";
+const HELP: &str = "codex-memory [OPTIONS] COMMAND\n\nCommands:\n  hook       Read Codex hook JSON on stdin (errors warn; never block)\n  compress   Force summarization; stdin: session_id, cwd, transcript_path\n  restore    Return saved context; stdin: session_id, cwd\n  hooks      Print native Codex hooks.json configuration\n  schema     Print the model output JSON schema\n  search QUERY  Find project notes matching all query words\n  read ID       Read one project note\n\nOptions:\n  --store PATH          Absolute memory directory (default: $CODEX_HOME/confucius-memory)\n  --cwd PATH            Project directory for search/read (default: current directory)\n  --codex PATH          Codex CLI executable (default: codex)\n  --model NAME          Summarizer model (default: hook model, then CLI default)\n  --max-tokens N        Estimated history threshold (default: 100000)\n  --retain-tokens N     Estimated history target (default: 50000)\n  --timeout-seconds N   Total model time per hook, 1..600 (default: 120)\n\nToken estimates use UTF-8 bytes/4. No native Codex transcript is rewritten.\n";
+enum Command {
+    Hook,
+    Compress,
+    Restore,
+    Hooks,
+    Schema,
+    Lookup(app::Lookup),
+}
 struct Options {
     store: PathBuf,
     codex: PathBuf,
@@ -19,7 +27,8 @@ struct Options {
     max: usize,
     retain: usize,
     timeout: Duration,
-    command: String,
+    command: Command,
+    cwd: Option<PathBuf>,
 }
 impl Options {
     fn parse(args: Vec<String>) -> Result<Self, String> {
@@ -34,18 +43,37 @@ impl Options {
             max: 100000,
             retain: 50000,
             timeout: Duration::from_secs(120),
-            command: String::new(),
+            command: Command::Hook,
+            cwd: None,
         };
+        let mut command = None;
         let mut args = args.into_iter();
         while let Some(arg) = args.next() {
             if matches!(
                 arg.as_str(),
-                "hook" | "compress" | "restore" | "hooks" | "schema"
+                "hook" | "compress" | "restore" | "hooks" | "schema" | "search" | "read"
             ) {
-                if !options.command.is_empty() {
+                if command.is_some() {
                     return Err("only one command is allowed".into());
                 }
-                options.command = arg;
+                command = Some(match arg.as_str() {
+                    "hook" => Command::Hook,
+                    "compress" => Command::Compress,
+                    "restore" => Command::Restore,
+                    "hooks" => Command::Hooks,
+                    "schema" => Command::Schema,
+                    "search" | "read" => {
+                        let value = args
+                            .next()
+                            .ok_or_else(|| format!("missing argument for {arg}"))?;
+                        Command::Lookup(if arg == "search" {
+                            app::Lookup::Search(value.try_into()?)
+                        } else {
+                            app::Lookup::Read(value.try_into()?)
+                        })
+                    }
+                    _ => unreachable!(),
+                });
                 continue;
             }
             let value = args
@@ -53,6 +81,7 @@ impl Options {
                 .ok_or_else(|| format!("missing value for {arg}"))?;
             match arg.as_str() {
                 "--store" => options.store = value.into(),
+                "--cwd" => options.cwd = Some(value.into()),
                 "--codex" => options.codex = value.into(),
                 "--model" if !value.trim().is_empty() => options.model = Some(value),
                 "--max-tokens" => options.max = value.parse().map_err(|_| "invalid max-tokens")?,
@@ -66,8 +95,9 @@ impl Options {
                 _ => return Err(format!("unknown option: {arg}")),
             }
         }
-        if options.command.is_empty() {
-            return Err("a command is required; see --help".into());
+        options.command = command.ok_or("a command is required; see --help")?;
+        if options.cwd.is_some() && !matches!(options.command, Command::Lookup(_)) {
+            return Err("--cwd is only supported for search and read; hooks use event cwd".into());
         }
         if !options.store.is_absolute() {
             return Err("store path must be absolute".into());
@@ -121,9 +151,18 @@ fn quote(path: &Path) -> Result<String, String> {
 }
 fn run(args: Vec<String>) -> Result<Value, String> {
     let options = Options::parse(args)?;
-    match options.command.as_str() {
-        "hooks" => return options.hooks(),
-        "schema" => return Ok(memory::output_schema()),
+    match &options.command {
+        Command::Hooks => return options.hooks(),
+        Command::Schema => return Ok(memory::output_schema()),
+        Command::Lookup(request) => {
+            let cwd = options
+                .cwd
+                .clone()
+                .map(Ok)
+                .unwrap_or_else(env::current_dir)
+                .map_err(|e| e.to_string())?;
+            return app::lookup(&options.store, &cwd, request);
+        }
         _ => {}
     }
     let mut input = String::new();
@@ -136,11 +175,11 @@ fn run(args: Vec<String>) -> Result<Value, String> {
     }
     let mut event: Value =
         serde_json::from_str(&input).map_err(|e| format!("invalid hook input: {e}"))?;
-    if options.command == "compress" || options.command == "restore" {
+    if matches!(options.command, Command::Compress | Command::Restore) {
         let object = event.as_object_mut().ok_or("input must be an object")?;
         object.insert(
             "hook_event_name".into(),
-            json!(if options.command == "compress" {
+            json!(if matches!(options.command, Command::Compress) {
                 "PreCompact"
             } else {
                 "SessionStart"
@@ -170,11 +209,21 @@ fn run(args: Vec<String>) -> Result<Value, String> {
 }
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    if args.iter().any(|a| a == "--help" || a == "-h") {
+    if args.len() == 1 && matches!(args[0].as_str(), "--help" | "-h") {
         print!("{HELP}");
         return;
     }
-    let hook = args.iter().any(|a| a == "hook");
+    // Option values and lookup arguments may themselves be named "hook".
+    let mut scan = args.iter();
+    let mut hook = false;
+    while let Some(arg) = scan.next() {
+        if arg.starts_with("--") {
+            scan.next();
+        } else {
+            hook = arg == "hook";
+            break;
+        }
+    }
     match run(args) {
         Ok(output) => println!("{output}"),
         Err(error) if hook => println!(

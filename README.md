@@ -58,6 +58,11 @@ Review the generated file and merge its entries into your project's
 and trust the entries; the project configuration must also be trusted.
 Keep the built binary at the path used when generating the configuration.
 
+The bundled [memory skill](skills/confucius-memory/SKILL.md) helps Codex find
+saved discoveries before repeating an investigation. `search` finds matching
+notes and `read` opens one note, without a model call. The usage guide includes
+skill installation instructions.
+
 See the [usage guide](docs/usage.md) for configuration, budgets, manual commands,
 troubleshooting, and removal.
 

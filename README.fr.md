@@ -65,6 +65,11 @@ Codex, utilisez `/hooks` pour examiner et approuver les entrées. La configurati
 du projet doit également être reconnue comme fiable. Conservez le binaire à
 l’emplacement utilisé lors de la génération.
 
+Le [skill de mémoire fourni](skills/confucius-memory/SKILL.md) aide Codex à
+retrouver les découvertes enregistrées avant de recommencer une investigation.
+`search` trouve les notes correspondantes et `read` lit une note, sans appel au
+modèle. Le guide explique aussi comment installer le skill.
+
 Le [guide d’utilisation en anglais](docs/usage.md) détaille la configuration,
 les budgets, les commandes manuelles, le dépannage et la désinstallation.
 
