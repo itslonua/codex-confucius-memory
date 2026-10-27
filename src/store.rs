@@ -329,6 +329,64 @@ impl Dir {
         }
         self.sync()
     }
+    // The filesystem, rather than Unicode lowercasing, defines aliases. An
+    // existing entry must have exactly the requested spelling at every level.
+    fn check_spelling(&self, path: &str) -> Result<(), String> {
+        let (name, rest) = path
+            .split_once('/')
+            .map_or((path, None), |(a, b)| (a, Some(b)));
+        let c_name = cstring(name)?;
+        let mut stat = std::mem::MaybeUninit::<libc::stat>::uninit();
+        if unsafe {
+            libc::fstatat(
+                self.0.as_raw_fd(),
+                c_name.as_ptr(),
+                stat.as_mut_ptr(),
+                libc::AT_SYMLINK_NOFOLLOW,
+            )
+        } != 0
+        {
+            if std::io::Error::last_os_error().kind() == std::io::ErrorKind::NotFound {
+                return Ok(());
+            }
+            return Err(os_error());
+        }
+        if !self.names()?.iter().any(|entry| entry == name) {
+            return Err(format!(
+                "filesystem-equivalent memory path has different spelling: {path}"
+            ));
+        }
+        let directory = self.is_directory(name)?;
+        if let Some(rest) = rest {
+            if !directory {
+                return Err("memory file conflicts with a directory".into());
+            }
+            self.child(name, false)?
+                .ok_or("directory disappeared")?
+                .check_spelling(rest)?;
+        }
+        Ok(())
+    }
+
+    // Reserve empty entries in unpublished staging before writing any values.
+    // This catches aliases between new names, including directory components.
+    fn reserve(&self, path: &str, directory: bool) -> Result<(), String> {
+        self.check_spelling(path)?;
+        if let Some((parent, rest)) = path.split_once('/') {
+            self.child(parent, true)?
+                .ok_or("cannot create staging directory")?
+                .reserve(rest, directory)
+        } else if directory {
+            self.child(path, true)?
+                .ok_or("cannot create staging directory")?;
+            Ok(())
+        } else {
+            self.file(path, true)?
+                .ok_or("cannot reserve staging file")?;
+            Ok(())
+        }
+    }
+
     fn write(&self, path: &str, bytes: &[u8]) -> Result<(), String> {
         if let Some((parent, file)) = path.split_once('/') {
             let child = self
@@ -571,6 +629,34 @@ impl Writer {
     pub fn load(&self) -> Result<Project, String> {
         load_project(&self.root, &self.stem)
     }
+    fn stage_paths(
+        dir: &Dir,
+        documents: impl Iterator<Item = impl AsRef<str>>,
+        sessions: impl Iterator<Item = impl AsRef<str>>,
+    ) -> Result<Dir, String> {
+        let paths: Vec<_> = documents
+            .map(|path| (path.as_ref().to_owned(), false))
+            .chain(sessions.map(|id| (format!("sessions/{}", id.as_ref()), true)))
+            .chain([
+                ("runtime.json".to_owned(), false),
+                ("manifest.json".to_owned(), false),
+            ])
+            .collect();
+        for (path, _) in &paths {
+            dir.check_spelling(path)?;
+        }
+        dir.check_spelling(".journal-tmp")?;
+        if dir.child(".journal-tmp", false)?.is_some() {
+            dir.remove(".journal-tmp")?;
+        }
+        let stage = dir
+            .child(".journal-tmp", true)?
+            .ok_or("cannot create journal")?;
+        for (path, directory) in paths {
+            stage.reserve(&path, directory)?;
+        }
+        Ok(stage)
+    }
     pub fn save(&self, project: &Project) -> Result<(), String> {
         self.save_checked(project, &mut || Ok(()))
     }
@@ -644,15 +730,11 @@ impl Writer {
             .root
             .child(&self.stem, true)?
             .ok_or("cannot create project directory")?;
+        dir.check_spelling(".pending")?;
         if dir.child(".pending", false)?.is_some() {
             return Err("recover pending memory before another save".into());
         }
-        if dir.child(".journal-tmp", false)?.is_some() {
-            dir.remove(".journal-tmp")?;
-        }
-        let stage = dir
-            .child(".journal-tmp", true)?
-            .ok_or("cannot create journal")?;
+        let stage = Self::stage_paths(&dir, documents.keys(), project.sessions.keys())?;
         for (path, content) in &documents {
             stage.write(path, content.as_bytes())?;
         }
@@ -668,6 +750,7 @@ impl Writer {
         let Some(dir) = self.root.child(&self.stem, false)? else {
             return Ok(());
         };
+        dir.check_spelling(".pending")?;
         let Some(stage) = dir.child(".pending", false)? else {
             return Ok(());
         };
@@ -763,6 +846,17 @@ impl Writer {
             })
             .collect::<Result<BTreeMap<_, _>, String>>()?;
         crate::hierarchical_memory::tree_from_documents(Path::new(""), &notes)?;
+        // A journal may originate from an older version or have been edited.
+        // Check its spellings, then probe all proposed identities without
+        // modifying the pending journal or any published document.
+        for path in contents.keys() {
+            stage.check_spelling(path)?;
+        }
+        stage.check_spelling("runtime.json")?;
+        stage.check_spelling("manifest.json")?;
+        dir.check_spelling(".committed")?;
+        Self::stage_paths(&dir, contents.keys(), parsed.sessions.keys())?;
+        dir.remove(".journal-tmp")?;
         for (path, bytes) in contents {
             dir.write(&path, &bytes)?;
             checkpoint()?;
@@ -1155,5 +1249,227 @@ mod tests {
         assert_eq!(std::fs::read(&path).unwrap(), legacy_bytes);
         drop(active_writer);
         assert_eq!(read(&path).unwrap().notes, project().notes);
+    }
+    fn aliases(dir: &tempfile::TempDir, first: &str, second: &str) -> bool {
+        let probe = dir.path().join("probe");
+        std::fs::create_dir(&probe).unwrap();
+        std::fs::write(probe.join(first), "probe").unwrap();
+        probe.join(second).exists()
+    }
+
+    #[test]
+    fn filesystem_equivalent_note_components_never_overwrite_values() {
+        for (first, second) in [("A.md", "a.md"), ("Café.md", "Cafe\u{301}.md")] {
+            for directory in [false, true] {
+                let dir = tempfile::tempdir().unwrap();
+                let equivalent = aliases(&dir, first, second);
+                let path = path(&dir);
+                let mut data = Project::default();
+                let first = if directory {
+                    format!("{first}/first.md")
+                } else {
+                    first.to_owned()
+                };
+                let second = if directory {
+                    format!("{second}/second.md")
+                } else {
+                    second.to_owned()
+                };
+                data.notes.insert(first, "first value".into());
+                data.notes.insert(second, "second value".into());
+                let writer = Writer::open(&path).unwrap();
+                let result = writer.save(&data);
+                if equivalent {
+                    assert!(result.unwrap_err().contains("different spelling"));
+                    assert!(!path.with_extension("").join(".pending").exists());
+                    assert!(!path.with_extension("").join("runtime.json").exists());
+                    assert!(writer.load().unwrap().notes.is_empty());
+                } else {
+                    result.unwrap();
+                    assert_eq!(writer.load().unwrap().notes, data.notes);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn legacy_case_collision_keeps_original_and_does_not_publish_v2() {
+        let dir = tempfile::tempdir().unwrap();
+        let equivalent = aliases(&dir, "A", "a");
+        let path = path(&dir);
+        let legacy = json!({"version":1,"sessions":{},"notes":{
+            "shared/A":{"id":"shared/A","title":"First","body":"first value","evidence":["first evidence"]},
+            "shared/a":{"id":"shared/a","title":"Second","body":"second value","evidence":["second evidence"]}
+        }}).to_string();
+        std::fs::write(&path, &legacy).unwrap();
+        let writer = Writer::open(&path).unwrap();
+        let data = writer.load().unwrap();
+        let result = writer.save(&data);
+        if equivalent {
+            assert!(result.unwrap_err().contains("different spelling"));
+            assert!(!path.with_extension("").join("runtime.json").exists());
+            assert!(!path.with_extension("").join(".pending").exists());
+        } else {
+            result.unwrap();
+        }
+        assert_eq!(writer.load().unwrap().notes, data.notes);
+        assert_eq!(std::fs::read_to_string(path).unwrap(), legacy);
+    }
+
+    #[test]
+    fn case_colliding_session_ids_are_rejected_even_without_summaries() {
+        for with_summary in [false, true] {
+            let dir = tempfile::tempdir().unwrap();
+            let equivalent = aliases(&dir, "Session", "session");
+            let path = path(&dir);
+            let mut data = Project::default();
+            for id in ["Session", "session"] {
+                let mut session = Session::default();
+                if with_summary {
+                    session.memory.summary = Some(summary());
+                }
+                data.sessions.insert(id.into(), session);
+            }
+            let writer = Writer::open(&path).unwrap();
+            let result = writer.save(&data);
+            if equivalent {
+                assert!(result.unwrap_err().contains("different spelling"));
+                assert!(!path.with_extension("").join(".pending").exists());
+                assert!(!path.with_extension("").join("runtime.json").exists());
+            } else {
+                result.unwrap();
+                assert_eq!(writer.load().unwrap().sessions.len(), 2);
+            }
+        }
+    }
+
+    #[test]
+    fn manual_target_alias_blocks_save_before_journal_publication() {
+        let dir = tempfile::tempdir().unwrap();
+        let equivalent = aliases(&dir, "Topic", "topic");
+        let path = path(&dir);
+        let writer = Writer::open(&path).unwrap();
+        writer.save(&Project::default()).unwrap();
+        let notes = path.with_extension("").join("notes");
+        std::fs::create_dir_all(notes.join("Topic")).unwrap();
+        let mut data = Project::default();
+        data.notes.insert("topic/new.md".into(), "new".into());
+        let result = writer.save(&data);
+        if equivalent {
+            assert!(result.unwrap_err().contains("different spelling"));
+            assert!(!path.with_extension("").join(".pending").exists());
+            assert_eq!(std::fs::read_dir(notes.join("Topic")).unwrap().count(), 0);
+        } else {
+            result.unwrap();
+        }
+    }
+
+    #[test]
+    fn recovery_rejects_colliding_manifest_without_changing_pending_or_targets() {
+        let dir = tempfile::tempdir().unwrap();
+        let equivalent = aliases(&dir, "A.md", "a.md");
+        let path = path(&dir);
+        let root = path.with_extension("");
+        let mut data = Project::default();
+        data.notes.insert("A.md".into(), "original".into());
+        {
+            let writer = Writer::open(&path).unwrap();
+            writer.save(&data).unwrap();
+            data.notes.insert("A.md".into(), "replacement".into());
+            assert!(
+                writer
+                    .save_checked(&data, &mut || Err("crash".into()))
+                    .is_err()
+            );
+        }
+        let pending = root.join(".pending");
+        let manifest = json!(["notes/A.md", "notes/a.md"]).to_string();
+        std::fs::write(pending.join("manifest.json"), &manifest).unwrap();
+        if !equivalent {
+            std::fs::write(pending.join("notes/a.md"), "another value").unwrap();
+        }
+        let result = Writer::open(&path);
+        if equivalent {
+            assert!(result.err().unwrap().contains("different spelling"));
+            assert_eq!(
+                std::fs::read_to_string(root.join("notes/A.md")).unwrap(),
+                "original"
+            );
+            assert_eq!(
+                std::fs::read_to_string(pending.join("manifest.json")).unwrap(),
+                manifest
+            );
+            assert_eq!(
+                std::fs::read_to_string(pending.join("notes/A.md")).unwrap(),
+                "replacement"
+            );
+        } else {
+            assert!(result.is_ok());
+        }
+    }
+    #[test]
+    fn recovery_checks_session_ids_without_summary_documents() {
+        let dir = tempfile::tempdir().unwrap();
+        let equivalent = aliases(&dir, "Session", "session");
+        let path = path(&dir);
+        let root = path.with_extension("");
+        {
+            let writer = Writer::open(&path).unwrap();
+            writer.save(&Project::default()).unwrap();
+            assert!(
+                writer
+                    .save_checked(&Project::default(), &mut || Err("crash".into()))
+                    .is_err()
+            );
+        }
+        let runtime_path = root.join(".pending/runtime.json");
+        let mut runtime: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(&runtime_path).unwrap()).unwrap();
+        let session = json!({"cursor": Cursor::default(), "messages":[], "revision":0, "pending":false, "has_summary":false});
+        runtime["sessions"] = json!({"Session":session,"session":session});
+        let bytes = serde_json::to_vec(&runtime).unwrap();
+        std::fs::write(&runtime_path, &bytes).unwrap();
+        let before = std::fs::read(root.join("runtime.json")).unwrap();
+        let result = Writer::open(&path);
+        if equivalent {
+            assert!(result.err().unwrap().contains("different spelling"));
+            assert_eq!(std::fs::read(root.join("runtime.json")).unwrap(), before);
+            assert_eq!(std::fs::read(&runtime_path).unwrap(), bytes);
+        } else {
+            assert!(result.is_ok());
+        }
+    }
+
+    #[test]
+    fn recovery_checks_target_spelling_again_after_prepare() {
+        let dir = tempfile::tempdir().unwrap();
+        let equivalent = aliases(&dir, "Topic", "topic");
+        let path = path(&dir);
+        let root = path.with_extension("");
+        {
+            let writer = Writer::open(&path).unwrap();
+            writer.save(&Project::default()).unwrap();
+            let mut data = Project::default();
+            data.notes.insert("topic/new.md".into(), "new".into());
+            assert!(
+                writer
+                    .save_checked(&data, &mut || Err("crash".into()))
+                    .is_err()
+            );
+        }
+        std::fs::create_dir_all(root.join("notes/Topic")).unwrap();
+        let before = std::fs::read(root.join("runtime.json")).unwrap();
+        let result = Writer::open(&path);
+        if equivalent {
+            assert!(result.err().unwrap().contains("different spelling"));
+            assert_eq!(std::fs::read(root.join("runtime.json")).unwrap(), before);
+            assert_eq!(
+                std::fs::read_dir(root.join("notes/Topic")).unwrap().count(),
+                0
+            );
+            assert!(root.join(".pending/notes/topic/new.md").exists());
+        } else {
+            assert!(result.is_ok());
+        }
     }
 }
