@@ -1,0 +1,57 @@
+[
+  {
+    "id": "known_preferences",
+    "class": "familiar_recall",
+    "query": "parse validate compact testable",
+    "note_path": "projects/preferences.md",
+    "current_context": "You are answering a small recall question. No current message supplies the preference.",
+    "question": "Which two Python implementation preferences did the user explicitly request? If the evidence is absent, use unknown.",
+    "expected_terms": ["parse", "don't validate", "compact", "testable"],
+    "answer": "Parse, don't validate; prefer compact, testable code.",
+    "note": "The user explicitly asked for 'Parse, don't validate' at system boundaries and compact, testable code with observable behavior tests."
+  },
+  {
+    "id": "memory_cli_behavior",
+    "class": "familiar_recall",
+    "query": "search positional case-insensitive",
+    "note_path": "projects/memory-cli.md",
+    "current_context": "You are answering a small recall question. No current message supplies the implementation detail.",
+    "question": "For positional `codex-memory search QUERY`, what matching rule is used? If the evidence is absent, use unknown.",
+    "expected_terms": ["all", "words", "case-insensitive"],
+    "answer": "It matches all query words case-insensitively across note paths and raw Markdown.",
+    "note": "Positional `codex-memory search QUERY` is literal, case-insensitive, all-word search over paths and raw Markdown."
+  },
+  {
+    "id": "stale_override",
+    "class": "stale_memory_control",
+    "query": "retry count superseded historical",
+    "note_path": "projects/retry-policy.md",
+    "current_context": "Current task update: the retry count was changed to 2 today. This current statement supersedes historical notes.",
+    "question": "What retry count applies to the current task? The current task update is authoritative over memory.",
+    "expected_terms": ["2"],
+    "answer": "2",
+    "note": "Historical decision (superseded): retry count was 4. This is stale and must not override a newer explicit task update."
+  },
+  {
+    "id": "fresh_decision",
+    "class": "fresh_memory_recall",
+    "query": "new cache key decision parser refresh",
+    "note_path": "projects/cache-refresh.md",
+    "current_context": "You are answering a small recall question. No current message supplies the decision.",
+    "question": "What cache key did the user choose for parser refresh results? If the evidence is absent, use unknown.",
+    "expected_terms": ["parser", "version", "source"],
+    "answer": "Use a key composed from parser version and source identifier.",
+    "note": "New decision from the latest completed session: parser refresh results use a cache key composed from parser version and source identifier."
+  },
+  {
+    "id": "unknown_abstention",
+    "class": "unknown_control",
+    "query": "color palette dashboard shareable",
+    "note_path": "projects/dashboard.md",
+    "current_context": "You are answering a small recall question. The available memory may be unrelated.",
+    "question": "Which dashboard color palette did the user choose? If the evidence is absent, answer exactly unknown.",
+    "expected_terms": ["unknown"],
+    "answer": "unknown",
+    "note": "Dashboard implementation note: use stable category IDs in URLs and keep filters shareable. No color palette decision is recorded."
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "changed_files": [
+    "catalog.py",
+    "archive.py",
+    "tests/test_catalog.py"
+  ],
+  "acceptance_exit_code": 0,
+  "acceptance_stdout": "",
+  "acceptance_stderr": "",
+  "success": true
+}

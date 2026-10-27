@@ -1,0 +1,10 @@
+{
+  "changed_files": [
+    "archive.py",
+    "tests/test_policy.py"
+  ],
+  "acceptance_exit_code": 1,
+  "acceptance_stdout": "",
+  "acceptance_stderr": "Traceback (most recent call last):\n  File \"/Users/alexanderkrapivnoy/aria-deep/tools/codex-memory/bench/effect/oracle/policy.py\", line 10, in <module>\n    assert archive_key(\"A_B\") == \"ab\"\nAssertionError\n",
+  "success": false
+}

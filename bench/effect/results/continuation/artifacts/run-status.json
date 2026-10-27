@@ -1,0 +1,12 @@
+{
+  "state": "trials_in_progress",
+  "completed_trials": 4,
+  "memory_preflight": {
+    "learning_exit_code": 0,
+    "compress_exit_code": 0,
+    "searchable_note_count": 1,
+    "old_separator_retained_in_notes": true,
+    "restore_context_available": true,
+    "frozen_store_sha256": "24a9390233e6a0369776e23eeb05a0fc7945b5aa3912b475f74565a6ecd16fb0"
+  }
+}

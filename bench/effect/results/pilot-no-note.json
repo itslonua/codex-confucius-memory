@@ -1,0 +1,13 @@
+{
+  "status": "preflight_stopped_before_trials",
+  "method": "initial synthetic navigation-only fixture; one independent learning session followed by production codex-memory compress",
+  "observed": {
+    "learning_exit_code": 0,
+    "compress_exit_code": 0,
+    "searchable_project_notes": 0,
+    "held_out_trials": 0
+  },
+  "usage": null,
+  "raw_events_preserved": false,
+  "limitation": "The temporary directory was removed when the no-note guard raised, so the CLI JSONL and usage could not be recovered. No note was hand-authored."
+}

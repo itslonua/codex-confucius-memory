@@ -1,0 +1,7 @@
+{
+  "state": "setup_failure_before_model_trials",
+  "trial_count": 0,
+  "model_calls": 0,
+  "reason": "Pre-existing frozen-memory-store artifact from the preflight-only run caused copytree to raise FileExistsError.",
+  "fix": "Make copytree merge the same frozen source store into the already-created artifact directory."
+}
