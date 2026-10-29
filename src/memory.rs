@@ -244,6 +244,20 @@ impl Operation {
     }
 }
 
+fn json_size<T: Serialize>(value: &T) -> usize {
+    serde_json::to_vec(value).map_or(usize::MAX, |bytes| bytes.len())
+}
+
+fn map_json_size(entries: &BTreeMap<String, String>) -> usize {
+    let mut size = 2usize;
+    for (key, value) in entries {
+        let key_size = serde_json::to_string(key).expect("note key is JSON serializable").len();
+        let value_size = serde_json::to_string(value).expect("note value is JSON serializable").len();
+        size += key_size + value_size + 2;
+    }
+    size
+}
+
 pub fn output_schema() -> Value {
     let text = json!({"type":"string"});
     let fields = [
@@ -311,15 +325,21 @@ fn selected_notes(
 ) -> BTreeMap<&String, &String> {
     let mut selected = BTreeMap::new();
     let byte_budget = note_reserve(max_tokens).saturating_sub(32) * 4;
+    let mut current_size = 0usize;
+
     for (id, note) in notes {
-        selected.insert(id, note);
-        if serde_json::to_vec(&selected)
-            .expect("note serialization")
-            .len()
-            > byte_budget
-        {
-            selected.remove(id);
+        let key_size = serde_json::to_string(id)
+            .expect("note id is JSON serializable")
+            .len();
+        let value_size = serde_json::to_string(note)
+            .expect("note value is JSON serializable")
+            .len();
+        let next_size = current_size + key_size + value_size + 4;
+        if next_size > byte_budget {
+            continue;
         }
+        selected.insert(id, note);
+        current_size = next_size;
     }
     selected
 }
@@ -369,12 +389,7 @@ impl Memory {
         }
         let update: Update =
             serde_json::from_str(&result).map_err(|e| format!("invalid model memory: {e}"))?;
-        if serde_json::to_vec(&update.summary)
-            .map_err(|e| e.to_string())?
-            .len()
-            > 12000
-            || update.operations.len() > 8
-        {
+        if json_size(&update.summary) > 12000 || update.operations.len() > 8 {
             return Err("summary or operations exceed memory budget".into());
         }
         // Parse every operation first, then apply the complete sequence to a
@@ -417,12 +432,7 @@ impl Memory {
         for path in changed_paths {
             let content = candidate.remove(&path).expect("evaluated operation path");
             let previous = updated_notes.insert(path.clone(), content);
-            if updated_notes.len() > 128
-                || serde_json::to_vec(&updated_notes)
-                    .map_err(|e| e.to_string())?
-                    .len()
-                    > 32000
-            {
+            if updated_notes.len() > 128 || map_json_size(&updated_notes) > 32000 {
                 updated_notes.remove(&path);
                 if let Some(previous) = previous {
                     updated_notes.insert(path, previous);
